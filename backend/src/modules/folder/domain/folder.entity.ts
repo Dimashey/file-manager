@@ -1,57 +1,52 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-} from 'typeorm';
-import { UserOrm } from '../../auth/infrastructure/persistance/typeorm/entities/user.orm-entity';
+import { FolderCannotBeParentOfItselfError } from './errors/folder-cannot-be-parent-of-itself.error';
+import { FolderNameCannotBeEmptyError } from './errors/folder-name-cannot-be-empty.error';
 
-@Entity('folders')
 export class Folder {
-  @PrimaryGeneratedColumn('uuid')
-  /** Unique identifier for the folder */
-  id!: string;
+  constructor(
+    /** Unique identifier for the folder */
+    public readonly id: string,
 
-  @Column()
-  /** Display name of the folder */
-  name!: string;
+    /** Display name of the folder */
+    public name: string,
 
-  @Column({ type: 'uuid', nullable: true })
-  /** Parent folder ID. Null means root-level folder. */
-  parentId!: string | null;
+    /** Parent folder ID. Null means root-level folder. */
+    public parentId: string | null,
 
-  @ManyToOne(() => Folder, (folder) => folder.children, { nullable: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'parentId' })
-  parent!: Folder | null;
+    /** ID of the user who owns this folder */
+    public readonly ownerId: string,
 
-  @OneToMany(() => Folder, (folder) => folder.parent)
-  children!: Folder[];
+    /** Whether this folder is publicly accessible without authentication */
+    public isPublic: boolean,
 
-  @Column({ type: 'uuid' })
-  /** ID of the user who owns this folder */
-  ownerId!: string;
+    /** Sort position within the parent folder. Lower values appear first. */
+    public position: number,
 
-  @ManyToOne(() => UserOrm, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'ownerId' })
-  owner!: UserOrm;
+    /** Timestamp when the folder was created */
+    public readonly createdAt: Date,
 
-  @Column({ default: false })
-  /** Whether this folder is publicly accessible without authentication */
-  isPublic!: boolean;
+    /** Timestamp of the most recent update to this folder */
+    public updatedAt: Date,
+  ) {}
 
-  @Column({ default: 0 })
-  /** Sort position within the parent folder. Lower values appear first. */
-  position!: number;
+  rename(name: string) {
+    if (!name.trim()) {
+      throw new FolderNameCannotBeEmptyError();
+    }
 
-  @CreateDateColumn()
-  /** Timestamp when the folder was created */
-  createdAt!: Date;
+    this.name = name;
+    this.touch();
+  }
 
-  @UpdateDateColumn()
-  /** Timestamp of the most recent update to this folder */
-  updatedAt!: Date;
+  moveToParent(parentId: string | null) {
+    if (parentId === this.id) {
+      throw new FolderCannotBeParentOfItselfError();
+    }
+
+    this.parentId = parentId;
+    this.touch();
+  }
+
+  private touch() {
+    this.updatedAt = new Date();
+  }
 }
