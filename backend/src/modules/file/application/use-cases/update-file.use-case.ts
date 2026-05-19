@@ -17,7 +17,7 @@ export class UpdateFileUseCase {
     if (!file || file.ownerId !== cmd.userId) throw new FileNotFoundError();
 
     if (cmd.folderId) {
-      const folder = await this.fileMovePolicy.canMoveToFolder(cmd.folderId);
+      const folder = await this.fileMovePolicy.canMoveToFolder(cmd.folderId, cmd.userId);
 
       if (!folder) throw new ForbiddenException('Invalid folder');
     }

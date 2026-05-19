@@ -21,8 +21,8 @@ import { SharpImageService } from '../infrastructure/image/share-image.service';
 import { ImageCompressionProcessor } from '../infrastructure/queues/bull/image-compression.processor';
 
 import { FolderModule } from '../../folder/presentation/folder.module';
-import { APP_FILTER } from '@nestjs/core';
-import { DomainExceptionFilter } from './filters/domain-exception.filter';
+import { FileMovePolicy } from '../domain/policies/file-file.policy';
+import { FileMovePolicyImpl } from '../application/policies/file-move.policy.impl';
 
 @Module({
   imports: [
@@ -35,6 +35,10 @@ import { DomainExceptionFilter } from './filters/domain-exception.filter';
     {
       provide: FileRepository,
       useClass: TypeOrmFileRepository,
+    },
+    {
+      provide: FileMovePolicy,
+      useClass: FileMovePolicyImpl,
     },
     {
       provide: FileStorageService,

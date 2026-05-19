@@ -21,7 +21,7 @@ export class UploadFileUseCase {
 
   async execute(dto: UploadFileCommand) {
     if (dto.folderId) {
-      const folder = await this.fileMovePolicy.canMoveToFolder(dto.folderId);
+      const folder = await this.fileMovePolicy.canMoveToFolder(dto.folderId, dto.userId);
 
       if (!folder) throw new CanNotMoveFileToFolderError();
     }

@@ -7,11 +7,12 @@ setup:
 
 # Start the project using docker-compose
 start:
+	docker-compose build --no-cache backend
 	docker-compose up -d postgres minio redis
 	@echo "Waiting for database to be ready..."
 	@sleep 5
 	docker-compose run --rm backend npm run migration:run
-	docker-compose up --build backend
+	docker-compose up backend
 
 # View backend logs
 logs:

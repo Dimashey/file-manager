@@ -1,4 +1,4 @@
-import { UserOrm } from 'src/modules/auth/infrastructure/persistance/typeorm/entities/user.orm-entity';
+import { UserOrm } from '../../../../auth/infrastructure/persistance/typeorm/entities/user.orm-entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

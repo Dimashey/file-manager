@@ -1,5 +1,5 @@
-import { UserOrm } from 'src/modules/auth/infrastructure/persistance/typeorm/entities/user.orm-entity';
-import { Folder } from 'src/modules/folder/domain/folder.entity';
+import { UserOrm } from '../../../../../auth/infrastructure/persistance/typeorm/entities/user.orm-entity';
+import { FolderOrm } from '../../../../../folder/infrastructure/typeorm/etities/folder-orm.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -39,9 +39,9 @@ export class FileOrm {
   @Column({ type: 'uuid', nullable: true })
   folderId!: string | null;
 
-  @ManyToOne(() => Folder, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => FolderOrm, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'folderId' })
-  folder!: Folder | null;
+  folder!: FolderOrm | null;
 
   @Column({ type: 'uuid' })
   ownerId!: string;
