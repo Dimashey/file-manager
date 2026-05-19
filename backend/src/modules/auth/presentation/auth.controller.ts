@@ -1,71 +1,70 @@
-import {
-  Body,
-  ConflictException,
-  Controller,
-  Get,
-  Post,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { User } from '../domain/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { AuthTokenDto } from './dto/auth-token.dto';
+import { UserProfileDto } from './dto/user-profile.dto';
 import { Public } from '../../../shared/decorators/public.decorator';
 import { CurrentUser } from '../../../shared/decorators/current-user.decorator';
+import { LoginUseCase } from '../application/use-cases/login.use-case';
+import { LoginCommand } from '../application/dto/login.command';
+import { RegisterUseCase } from '../application/use-cases/register.use-case';
+import { RegisterCommand } from '../application/dto/register.command';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly jwtService: JwtService,
+    private readonly loginUsecase: LoginUseCase,
+    private readonly registerUseCase: RegisterUseCase,
   ) {}
 
   /** Registers a new user account and returns a JWT token */
   @Public()
   @Post('register')
-  async register(@Body() dto: RegisterDto): Promise<{ token: string }> {
-    const existing = await this.userRepository.findOne({ where: { email: dto.email } });
-    if (existing) {
-      throw new ConflictException('Email already in use');
-    }
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const user = this.userRepository.create({
-      email: dto.email,
-      name: dto.name,
-      password: hashedPassword,
-    });
-    const saved = await this.userRepository.save(user);
-    const token = this.jwtService.sign({ sub: saved.id, email: saved.email });
-    return { token };
+  @ApiOperation({ summary: 'Register a new user account' })
+  @ApiResponse({
+    status: 201,
+    description: 'User successfully registered and token generated',
+    type: AuthTokenDto,
+  })
+  @ApiResponse({ status: 409, description: 'Email already exists' })
+  async register(@Body() dto: RegisterDto): Promise<AuthTokenDto> {
+    return this.registerUseCase.execute(new RegisterCommand(dto.email, dto.password, dto.name));
   }
 
   /** Authenticates user credentials and returns a JWT token */
   @Public()
   @Post('login')
-  async login(@Body() dto: LoginDto): Promise<{ token: string }> {
-    const user = await this.userRepository.findOne({ where: { email: dto.email } });
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-    const isValid = await bcrypt.compare(dto.password, user.password);
-    if (!isValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-    const token = this.jwtService.sign({ sub: user.id, email: user.email });
-    return { token };
+  @ApiOperation({ summary: 'Authenticate user credentials' })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully authenticated and token generated',
+    type: AuthTokenDto,
+  })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  async login(@Body() dto: LoginDto): Promise<AuthTokenDto> {
+    return this.loginUsecase.execute(new LoginCommand(dto.email, dto.password));
   }
 
   /** Returns the currently authenticated user's profile */
   @ApiBearerAuth()
   @Get('me')
-  me(@CurrentUser() user: User): Omit<User, 'password'> {
-    const { password: _password, ...profile } = user;
-    return profile;
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved successfully',
+    type: UserProfileDto,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  me(@CurrentUser() user: User): UserProfileDto {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 }

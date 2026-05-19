@@ -8,7 +8,7 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { User } from '../../auth/domain/user.entity';
+import { UserOrm } from '../../auth/infrastructure/persistance/typeorm/entities/user.orm-entity';
 
 @Entity('folders')
 export class Folder {
@@ -35,9 +35,9 @@ export class Folder {
   /** ID of the user who owns this folder */
   ownerId!: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserOrm, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ownerId' })
-  owner!: User;
+  owner!: UserOrm;
 
   @Column({ default: false })
   /** Whether this folder is publicly accessible without authentication */

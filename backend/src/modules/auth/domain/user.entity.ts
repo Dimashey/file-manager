@@ -1,34 +1,25 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-
-@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  /** Unique identifier for the user */
-  id!: string;
+  constructor(
+    /** Unique identifier for the user */
+    public readonly id: string,
 
-  @Column({ unique: true })
-  /** User's email address, used for login and sharing */
-  email!: string;
+    /** User's email address, used for login and sharing */
+    public email: string,
 
-  @Column()
-  /** Bcrypt-hashed password */
-  password!: string;
+    /** Bcrypt-hashed password */
+    private passwordHash: string,
 
-  @Column()
-  /** Display name */
-  name!: string;
+    /** Display name */
+    public name: string,
 
-  @CreateDateColumn()
-  /** Timestamp when the user account was created */
-  createdAt!: Date;
+    /** Timestamp when the user account was created */
+    public readonly createdAt: Date,
 
-  @UpdateDateColumn()
-  /** Timestamp of the most recent update to the user record */
-  updatedAt!: Date;
+    /** Timestamp of the most recent update to the user record */
+    public updatedAt: Date,
+  ) {}
+
+  getPasswordHash() {
+    return this.passwordHash;
+  }
 }

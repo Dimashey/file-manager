@@ -3,13 +3,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
-import { User } from '../domain/user.entity';
+import { UserOrm } from '../infrastructure/persistance/typeorm/entities/user.orm-entity';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { LoginUseCase } from '../application/use-cases/login.use-case';
+import { HashService } from '../application/interfaces/hash.service';
+import { UsersRepository } from '../domain/repositories/users.repository';
+import { BcryptService } from '../infrastructure/crypto/bcrypt.service';
+import { TypeOrmUsersRepository } from '../infrastructure/persistance/typeorm/repositories/users.repository.impl';
+import { APP_FILTER } from '@nestjs/core';
+import { DomainExceptionFilter } from './filters/domain-exception.filters';
+import { RegisterUseCase } from '../application/use-cases/register.use-case';
+import { TokenService } from '../application/interfaces/token.service';
+import { JwtTokenService } from '../infrastructure/jwt/jwt-token.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([UserOrm]),
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -20,7 +30,27 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [JwtStrategy],
+  providers: [
+    JwtStrategy,
+    LoginUseCase,
+    RegisterUseCase,
+    {
+      provide: UsersRepository,
+      useClass: TypeOrmUsersRepository,
+    },
+    {
+      provide: TokenService,
+      useClass: JwtTokenService,
+    },
+    {
+      provide: HashService,
+      useClass: BcryptService,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: DomainExceptionFilter,
+    },
+  ],
   exports: [TypeOrmModule],
 })
 export class AuthModule {}

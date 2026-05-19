@@ -108,10 +108,7 @@ describe('FolderController', () => {
       });
 
       expect(repo.update).toHaveBeenCalledTimes(2);
-      expect(repo.update).toHaveBeenCalledWith(
-        { id: 'f-1', ownerId: 'user-1' },
-        { position: 0 },
-      );
+      expect(repo.update).toHaveBeenCalledWith({ id: 'f-1', ownerId: 'user-1' }, { position: 0 });
     });
   });
 
@@ -123,8 +120,15 @@ describe('FolderController', () => {
     });
 
     it('should create a copy with (copy) suffix', async () => {
-      const source = { id: 'f-1', name: 'Docs', parentId: null, ownerId: 'user-1', isPublic: false, position: 0 } as Folder;
-      const cloned = { ...source, id: 'f-2', name: 'Docs (copy)' } as Folder;
+      const source = {
+        id: 'f-1',
+        name: 'Docs',
+        parentId: null,
+        ownerId: 'user-1',
+        isPublic: false,
+        position: 0,
+      } as Folder;
+      const cloned = { ...source, id: 'f-2', name: 'Docs (copy)' };
 
       repo.findOne.mockResolvedValue(source);
       repo.create.mockReturnValue(cloned);

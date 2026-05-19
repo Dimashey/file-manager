@@ -11,7 +11,7 @@ export const dataSourceOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME || 'filemanager',
   password: process.env.DB_PASSWORD || 'filemanager',
   database: process.env.DB_DATABASE || 'filemanager',
-  entities: [join(__dirname, '..', 'modules', '**', 'domain', '*.entity.{ts,js}')],
+  entities: [join(__dirname, '..', '**', '*.{entity,orm-entity}.{ts,js}')],
   migrations: [join(__dirname, '..', 'migrations', '*.{ts,js}')],
   synchronize: false,
 };
