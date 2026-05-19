@@ -5,6 +5,7 @@ import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { dataSourceOptions } from './config/typeorm.config';
 import { AuthModule } from './modules/auth/presentation/auth.module';
+import { FolderModule } from './modules/folder/presentation/folder.module';
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 
 @Module({
@@ -12,6 +13,7 @@ import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
     TypeOrmModule.forRoot(dataSourceOptions),
     AuthModule,
+    FolderModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },
