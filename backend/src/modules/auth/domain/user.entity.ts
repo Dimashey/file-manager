@@ -25,8 +25,10 @@ export class User {
   name!: string;
 
   @CreateDateColumn()
+  /** Timestamp when the user account was created */
   createdAt!: Date;
 
   @UpdateDateColumn()
+  /** Timestamp of the most recent update to the user record */
   updatedAt!: Date;
 }
