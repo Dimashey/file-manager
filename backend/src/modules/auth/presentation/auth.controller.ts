@@ -5,7 +5,6 @@ import {
   Get,
   Post,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,7 +16,6 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Public } from '../../../shared/decorators/public.decorator';
 import { CurrentUser } from '../../../shared/decorators/current-user.decorator';
-import { JwtAuthGuard } from '../../../shared/guards/jwt-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -65,7 +63,6 @@ export class AuthController {
 
   /** Returns the currently authenticated user's profile */
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('me')
   me(@CurrentUser() user: User): Omit<User, 'password'> {
     const { password: _password, ...profile } = user;
