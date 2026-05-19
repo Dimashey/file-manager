@@ -11,8 +11,6 @@ import { ReorderFoldersUseCase } from '../application/use-cases/reorder-folders.
 import { UpdateFolderUseCase } from '../application/use-cases/update-folder.use-case';
 import { DeleteFolderUseCase } from '../application/use-cases/delete-folder.use-case';
 import { CloneFolderUseCase } from '../application/use-cases/clone-folder.use-case';
-import { APP_FILTER } from '@nestjs/core';
-import { DomainExceptionFilter } from './filters/domain-exception.filter';
 import { FileMovePolicy } from 'src/modules/file/domain/policies/file-file.policy';
 import { FileMovePolicyImpl } from 'src/modules/file/application/policies/file-move.policy.impl';
 
@@ -30,11 +28,6 @@ import { FileMovePolicyImpl } from 'src/modules/file/application/policies/file-m
     UpdateFolderUseCase,
     DeleteFolderUseCase,
     CloneFolderUseCase,
-
-    {
-      provide: APP_FILTER,
-      useClass: DomainExceptionFilter,
-    },
   ],
   exports: [TypeOrmModule, FolderRepository],
 })

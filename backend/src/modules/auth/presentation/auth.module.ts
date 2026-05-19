@@ -11,8 +11,6 @@ import { HashService } from '../application/interfaces/hash.service';
 import { UsersRepository } from '../domain/repositories/users.repository';
 import { BcryptService } from '../infrastructure/crypto/bcrypt.service';
 import { TypeOrmUsersRepository } from '../infrastructure/persistance/typeorm/repositories/users.repository.impl';
-import { APP_FILTER } from '@nestjs/core';
-import { DomainExceptionFilter } from './filters/domain-exception.filters';
 import { RegisterUseCase } from '../application/use-cases/register.use-case';
 import { TokenService } from '../application/interfaces/token.service';
 import { JwtTokenService } from '../infrastructure/jwt/jwt-token.service';
@@ -45,10 +43,6 @@ import { JwtTokenService } from '../infrastructure/jwt/jwt-token.service';
     {
       provide: HashService,
       useClass: BcryptService,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: DomainExceptionFilter,
     },
   ],
   exports: [TypeOrmModule],

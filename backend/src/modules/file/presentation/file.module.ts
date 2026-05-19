@@ -54,11 +54,6 @@ import { DomainExceptionFilter } from './filters/domain-exception.filter';
     DownloadFileUseCase,
     DeleteFileUseCase,
     CloneFileUseCase,
-
-    {
-      provide: APP_FILTER,
-      useClass: DomainExceptionFilter,
-    },
   ],
   exports: [TypeOrmModule, FileStorageService],
 })
