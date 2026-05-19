@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileRepository } from 'src/modules/file/domain/repositories/file.repository';
 import { FileOrm } from '../entities/file-orm.entity';
-import { IsNull, Repository } from 'typeorm';
+import { ILike, IsNull, Repository } from 'typeorm';
 import { FileMapper } from '../file.mapper';
 import { File } from 'src/modules/file/domain/file.entity';
 
@@ -56,5 +56,14 @@ export class TypeOrmFileRepository implements FileRepository {
         await manager.update(FileOrm, { id: item.id, ownerId }, { position: item.position });
       }
     });
+  }
+
+  async search(ownerId: string, name: string): Promise<File[]> {
+    const files = await this.repo.find({
+      where: { ownerId, name: ILike(`%${name}%`) },
+      order: { position: 'ASC', createdAt: 'ASC' },
+    });
+
+    return files.map(FileMapper.toDomain);
   }
 }

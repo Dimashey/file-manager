@@ -11,6 +11,7 @@ import { ReorderFoldersUseCase } from '../application/use-cases/reorder-folders.
 import { UpdateFolderUseCase } from '../application/use-cases/update-folder.use-case';
 import { DeleteFolderUseCase } from '../application/use-cases/delete-folder.use-case';
 import { CloneFolderUseCase } from '../application/use-cases/clone-folder.use-case';
+import { SearchFoldersUseCase } from '../application/use-cases/search-folders.use-case';
 import { FileMovePolicy } from 'src/modules/file/domain/policies/file-file.policy';
 import { FileMovePolicyImpl } from 'src/modules/file/application/policies/file-move.policy.impl';
 
@@ -28,6 +29,7 @@ import { FileMovePolicyImpl } from 'src/modules/file/application/policies/file-m
     UpdateFolderUseCase,
     DeleteFolderUseCase,
     CloneFolderUseCase,
+    SearchFoldersUseCase,
   ],
   exports: [TypeOrmModule, FolderRepository],
 })

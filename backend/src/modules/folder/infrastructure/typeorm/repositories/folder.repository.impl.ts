@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FolderRepository } from 'src/modules/folder/domain/repositories/folder.repository';
-import { IsNull, Repository } from 'typeorm';
+import { ILike, IsNull, Repository } from 'typeorm';
 import { FolderOrm } from '../etities/folder-orm.entity';
 import { FolderMapper } from '../folder.mapper';
 import { Folder } from 'src/modules/folder/domain/folder.entity';
@@ -69,5 +69,14 @@ export class TypeOrmFolderRepository implements FolderRepository {
     });
 
     return children.map(FolderMapper.toDomain);
+  }
+
+  async search(userId: string, name: string): Promise<Folder[]> {
+    const folders = await this.repo.find({
+      where: { ownerId: userId, name: ILike(`%${name}%`) },
+      order: { position: 'ASC', createdAt: 'ASC' },
+    });
+
+    return folders.map(FolderMapper.toDomain);
   }
 }

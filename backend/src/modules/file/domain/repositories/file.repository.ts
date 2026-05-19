@@ -15,4 +15,6 @@ export abstract class FileRepository {
     items: { id: string; position: number }[],
     ownerId: string,
   ): Promise<void>;
+
+  abstract search(ownerId: string, name: string): Promise<File[]>;
 }

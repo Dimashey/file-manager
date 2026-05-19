@@ -12,6 +12,8 @@ import { ListFoldersCommand } from '../application/dto/list-folders.command';
 import { ReorderFoldersCommand } from '../application/dto/reorder-folders.command';
 import { UpdateFolderCommand } from '../application/dto/update-folder.command';
 import { CloneFolderUseCase } from '../application/use-cases/clone-folder.use-case';
+import { SearchFoldersUseCase } from '../application/use-cases/search-folders.use-case';
+import { SearchFoldersCommand } from '../application/dto/search-folders.command';
 import { CreateFolderUseCase } from '../application/use-cases/create-folder.use-case';
 import { DeleteFolderUseCase } from '../application/use-cases/delete-folder.use-case';
 import { GetFolderUseCase } from '../application/use-cases/get-folder.use-case';
@@ -29,6 +31,7 @@ export class FolderController {
     private readonly update: UpdateFolderUseCase,
     private readonly remove: DeleteFolderUseCase,
     private readonly clone: CloneFolderUseCase,
+    private readonly searchUseCase: SearchFoldersUseCase,
   ) {}
 
   @Get()
@@ -39,6 +42,11 @@ export class FolderController {
   @Post()
   createFolder(@CurrentUser() user: User, @Body() dto: CreateFolderDto) {
     return this.create.execute(new CreateFolderCommand(user.id, dto.name, dto.parentId));
+  }
+
+  @Get('search')
+  searchFolders(@CurrentUser() user: User, @Query('name') name: string) {
+    return this.searchUseCase.execute(new SearchFoldersCommand(user.id, name ?? ''));
   }
 
   @Get(':id')

@@ -35,6 +35,8 @@ import { DeleteFileUseCase } from '../application/use-cases/delete-file.use-case
 import { DeleteFileCommand } from '../application/dto/delete-file.command';
 import { CloneFileUseCase } from '../application/use-cases/clone-file.use-case';
 import { CloneFileCommand } from '../application/dto/clone-file.command';
+import { SearchFilesUseCase } from '../application/use-cases/search-files.use-case';
+import { SearchFilesCommand } from '../application/dto/search-files.command';
 
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
 
@@ -51,6 +53,7 @@ export class FileController {
     private readonly downloadFileUseCase: DownloadFileUseCase,
     private readonly deleteFileUseCase: DeleteFileUseCase,
     private readonly cloneFileUseCase: CloneFileUseCase,
+    private readonly searchFilesUseCase: SearchFilesUseCase,
   ) {}
 
   @Get()
@@ -77,6 +80,11 @@ export class FileController {
     @Body('folderId') folderId?: string,
   ) {
     return this.uploadFileUseCase.execute(new UploadFileCommand(user.id, file, folderId));
+  }
+
+  @Get('search')
+  search(@CurrentUser() user: User, @Query('name') name: string) {
+    return this.searchFilesUseCase.execute(new SearchFilesCommand(user.id, name ?? ''));
   }
 
   @Get(':id')

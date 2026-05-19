@@ -16,9 +16,7 @@ Create a simple service for storing files, with the ability to manage and edit t
 **Frontend**
 
 - React.js + TypeScript
-- Use **React class components** (no hooks)
 - Can be implemented with **plain React** or a **meta-framework** built on top of it (e.g., **Next.js**, **TanStack Start**)
-- State management: **Redux only** (not Redux Toolkit) with **Redux Sagas**
 - Additional libraries if needed (e.g., Axios, React Query, Apollo, etc.)
 
 **Backend**
@@ -26,17 +24,16 @@ Create a simple service for storing files, with the ability to manage and edit t
 - Nest.js
 - RESTful / GraphQL API
 - Implement requests to the database directly in the Controllers
-- Add a hardcoded bearer token for API that allows any request without authorization _(for demo/convenience)_
 - OpenAPI documentation (REST API only)
 
 ### **✅ Checkpoints**
 
 - Simple authentication
 - Simple UI
-- File upload functionality _(store only images — JPEG, PNG, WebP)_
+- File upload functionality
 - Support for a hierarchical folder system (nested folders and files)
 - Reordering of files and folders
-- Unit tests coverage _(Mocha required)_
+- Unit tests coverage (jsest)
 - File and folder management: clone, remove, rename, and edit (optional)
 - Search files and folders by name
 - Public or private file visibility

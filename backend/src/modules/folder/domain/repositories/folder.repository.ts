@@ -14,4 +14,6 @@ export abstract class FolderRepository {
   abstract updatePositions(items: { id: string; position: number }[], userId: string): Promise<void>;
 
   abstract findChildren(parentId: string, userId: string): Promise<Folder[]>;
+
+  abstract search(userId: string, name: string): Promise<Folder[]>;
 }
