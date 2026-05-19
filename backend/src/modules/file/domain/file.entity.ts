@@ -1,78 +1,55 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
-import { UserOrm } from '../../auth/infrastructure/persistance/typeorm/entities/user.orm-entity';
-import { Folder } from '../../folder/domain/folder.entity';
+export class File {
+  constructor(
+    /** Unique identifier for the file */
+    public readonly id: string,
 
-@Entity('files')
-export class FileEntity {
-  @PrimaryGeneratedColumn('uuid')
-  /** Unique identifier for the file */
-  id!: string;
+    /** Display name shown to the user (can be renamed) */
+    public name: string,
 
-  @Column()
-  /** Display name shown to the user (can be renamed) */
-  name!: string;
+    /** Original filename from the upload */
+    public readonly originalName: string,
 
-  @Column()
-  /** Original filename from the upload */
-  originalName!: string;
+    /** MIME type detected at upload time */
+    public readonly mimeType: string,
 
-  @Column()
-  /** MIME type detected at upload time */
-  mimeType!: string;
+    /** File extension including dot, e.g. ".pdf", ".jpg" */
+    public readonly extension: string,
 
-  @Column()
-  /** File extension including dot, e.g. ".pdf", ".jpg" */
-  extension!: string;
+    /** File size in bytes */
+    public readonly size: number,
 
-  @Column({ type: 'bigint' })
-  /** File size in bytes */
-  size!: number;
+    /** Object key in MinIO storage bucket */
+    public readonly storagePath: string,
 
-  @Column()
-  /** Object key in MinIO storage bucket */
-  storagePath!: string;
+    /** Compressed thumbnail path in MinIO. Only populated for image files after background job completes. */
+    public thumbnailPath: string | null,
 
-  @Column({ type: 'varchar', nullable: true })
-  /** Compressed thumbnail path in MinIO. Only populated for image files after background job completes. */
-  thumbnailPath!: string | null;
+    /** Parent folder ID. Null means the file is at root level. */
+    public folderId: string | null,
 
-  @Column({ type: 'uuid', nullable: true })
-  /** Parent folder ID. Null means the file is at root level. */
-  folderId!: string | null;
+    /** ID of the user who owns this file */
+    public readonly ownerId: string,
 
-  @ManyToOne(() => Folder, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'folderId' })
-  folder!: Folder | null;
+    /** Whether this file is publicly accessible without authentication */
+    public isPublic: boolean,
 
-  @Column({ type: 'uuid' })
-  /** ID of the user who owns this file */
-  ownerId!: string;
+    /** Sort position within the parent folder */
+    public position: number,
 
-  @ManyToOne(() => UserOrm, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'ownerId' })
-  owner!: UserOrm;
+    /** Timestamp when the file was uploaded */
+    public readonly createdAt: Date,
 
-  @Column({ default: false })
-  /** Whether this file is publicly accessible without authentication */
-  isPublic!: boolean;
+    /** Timestamp of the most recent update to this file record */
+    public updatedAt: Date,
+  ) {}
 
-  @Column({ default: 0 })
-  /** Sort position within the parent folder */
-  position!: number;
+  setThumbnail(path: string | null) {
+    this.thumbnailPath = path;
 
-  @CreateDateColumn()
-  /** Timestamp when the file was uploaded */
-  createdAt!: Date;
+    this.touch();
+  }
 
-  @UpdateDateColumn()
-  /** Timestamp of the most recent update to this file record */
-  updatedAt!: Date;
+  private touch() {
+    this.updatedAt = new Date();
+  }
 }
