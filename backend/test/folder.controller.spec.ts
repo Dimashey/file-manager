@@ -7,6 +7,7 @@ import { ReorderFoldersUseCase } from '../src/modules/folder/application/use-cas
 import { UpdateFolderUseCase } from '../src/modules/folder/application/use-cases/update-folder.use-case';
 import { DeleteFolderUseCase } from '../src/modules/folder/application/use-cases/delete-folder.use-case';
 import { CloneFolderUseCase } from '../src/modules/folder/application/use-cases/clone-folder.use-case';
+import { SearchFoldersUseCase } from '../src/modules/folder/application/use-cases/search-folders.use-case';
 import { User } from '../src/modules/auth/domain/user.entity';
 
 const mockUser = { id: 'user-1', email: 'a@b.com', name: 'A' } as User;
@@ -20,6 +21,7 @@ describe('FolderController', () => {
   let updateUseCase: jest.Mocked<UpdateFolderUseCase>;
   let deleteUseCase: jest.Mocked<DeleteFolderUseCase>;
   let cloneUseCase: jest.Mocked<CloneFolderUseCase>;
+  let searchUseCase: jest.Mocked<SearchFoldersUseCase>;
 
   beforeEach(async () => {
     listUseCase = { execute: jest.fn() } as any;
@@ -29,6 +31,7 @@ describe('FolderController', () => {
     updateUseCase = { execute: jest.fn() } as any;
     deleteUseCase = { execute: jest.fn() } as any;
     cloneUseCase = { execute: jest.fn() } as any;
+    searchUseCase = { execute: jest.fn() } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FolderController],
@@ -40,6 +43,7 @@ describe('FolderController', () => {
         { provide: UpdateFolderUseCase, useValue: updateUseCase },
         { provide: DeleteFolderUseCase, useValue: deleteUseCase },
         { provide: CloneFolderUseCase, useValue: cloneUseCase },
+        { provide: SearchFoldersUseCase, useValue: searchUseCase },
       ],
     }).compile();
 
