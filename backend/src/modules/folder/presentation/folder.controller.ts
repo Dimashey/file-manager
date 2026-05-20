@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 import { ReorderDto } from './dto/reorder.dto';
@@ -21,6 +22,8 @@ import { ListFoldersUseCase } from '../application/use-cases/list-folders.use-ca
 import { ReorderFoldersUseCase } from '../application/use-cases/reorder-folders.use-case';
 import { UpdateFolderUseCase } from '../application/use-cases/update-folder.use-case';
 
+@ApiTags('folders')
+@ApiBearerAuth()
 @Controller('folders')
 export class FolderController {
   constructor(
