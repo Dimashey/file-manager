@@ -11,7 +11,10 @@ export abstract class FolderRepository {
 
   abstract updatePosition(id: string, userId: string, position: number): Promise<void>;
 
-  abstract updatePositions(items: { id: string; position: number }[], userId: string): Promise<void>;
+  abstract updatePositions(
+    items: { id: string; position: number }[],
+    userId: string,
+  ): Promise<void>;
 
   abstract findChildren(parentId: string, userId: string): Promise<Folder[]>;
 

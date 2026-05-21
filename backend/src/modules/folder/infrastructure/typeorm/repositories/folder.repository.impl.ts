@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FolderRepository } from 'src/modules/folder/domain/repositories/folder.repository';
 import { ILike, IsNull, Repository } from 'typeorm';
-import { FolderOrm } from '../etities/folder-orm.entity';
+import { FolderOrm } from '../entities/folder-orm.entity';
 import { FolderMapper } from '../folder.mapper';
 import { Folder } from 'src/modules/folder/domain/folder.entity';
 
@@ -55,7 +55,11 @@ export class TypeOrmFolderRepository implements FolderRepository {
   async updatePositions(items: { id: string; position: number }[], userId: string): Promise<void> {
     await this.repo.manager.transaction(async (manager) => {
       for (const item of items) {
-        await manager.update(FolderOrm, { id: item.id, ownerId: userId }, { position: item.position });
+        await manager.update(
+          FolderOrm,
+          { id: item.id, ownerId: userId },
+          { position: item.position },
+        );
       }
     });
   }

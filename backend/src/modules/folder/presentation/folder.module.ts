@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FolderOrm } from '../infrastructure/typeorm/etities/folder-orm.entity';
+import { FolderOrm } from '../infrastructure/typeorm/entities/folder-orm.entity';
 import { FolderController } from './folder.controller';
 import { FolderRepository } from '../domain/repositories/folder.repository';
 import { TypeOrmFolderRepository } from '../infrastructure/typeorm/repositories/folder.repository.impl';
@@ -16,8 +16,8 @@ import { GetPublicFolderUseCase } from '../application/use-cases/get-public-fold
 import { FileMovePolicy } from 'src/modules/file/domain/policies/file-file.policy';
 import { FileMovePolicyImpl } from 'src/modules/file/application/policies/file-move.policy.impl';
 import { FileRepository } from 'src/modules/file/domain/repositories/file.repository';
-import { TypeOrmFileRepository } from 'src/modules/file/infrastructure/persistance/typeorm/repositories/files.respository.impl';
-import { FileOrm } from 'src/modules/file/infrastructure/persistance/typeorm/entities/file-orm.entity';
+import { TypeOrmFileRepository } from 'src/modules/file/infrastructure/persistence/typeorm/repositories/files.repository.impl';
+import { FileOrm } from 'src/modules/file/infrastructure/persistence/typeorm/entities/file-orm.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([FolderOrm, FileOrm])],

@@ -1,5 +1,5 @@
 import { Folder } from '../../domain/folder.entity';
-import { FolderOrm } from './etities/folder-orm.entity';
+import { FolderOrm } from './entities/folder-orm.entity';
 
 export class FolderMapper {
   static toDomain(orm: FolderOrm): Folder {

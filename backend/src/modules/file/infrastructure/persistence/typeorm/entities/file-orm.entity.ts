@@ -1,5 +1,5 @@
-import { UserOrm } from '../../../../../auth/infrastructure/persistance/typeorm/entities/user.orm-entity';
-import { FolderOrm } from '../../../../../folder/infrastructure/typeorm/etities/folder-orm.entity';
+import { UserOrm } from '../../../../../auth/infrastructure/persistence/typeorm/entities/user.orm-entity';
+import { FolderOrm } from '../../../../../folder/infrastructure/typeorm/entities/folder-orm.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

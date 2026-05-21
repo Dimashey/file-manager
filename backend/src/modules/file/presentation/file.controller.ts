@@ -105,7 +105,8 @@ export class FileController {
   @Get()
   @ApiOperation({
     summary: 'List files',
-    description: 'Retrieve a list of files owned by the current user, optionally filtered by folder',
+    description:
+      'Retrieve a list of files owned by the current user, optionally filtered by folder',
   })
   @ApiQuery({
     name: 'folderId',
@@ -117,7 +118,10 @@ export class FileController {
     type: [FileResponseDto],
     description: 'List of files retrieved successfully',
   })
-  async list(@CurrentUser() user: User, @Query('folderId') folderId?: string): Promise<FileResponseDto[]> {
+  async list(
+    @CurrentUser() user: User,
+    @Query('folderId') folderId?: string,
+  ): Promise<FileResponseDto[]> {
     return this.listFilesUseCase.execute(new ListFilesCommand(user.id, folderId));
   }
 
@@ -191,7 +195,10 @@ export class FileController {
   @ApiNotFoundResponse({
     description: 'File not found or user does not have access',
   })
-  async findOne(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string): Promise<FileResponseDto> {
+  async findOne(
+    @CurrentUser() user: User,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<FileResponseDto> {
     return this.getFileUseCase.execute(new GetFileCommand(user.id, id));
   }
 
@@ -315,7 +322,8 @@ export class FileController {
   @Post(':id/clone')
   @ApiOperation({
     summary: 'Clone file',
-    description: 'Duplicates the file in storage and creates a new metadata entry with the "(copy)" suffix',
+    description:
+      'Duplicates the file in storage and creates a new metadata entry with the "(copy)" suffix',
   })
   @ApiParam({
     name: 'id',
@@ -331,8 +339,10 @@ export class FileController {
   @ApiNotFoundResponse({
     description: 'Original file not found or user does not have access',
   })
-  async clone(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string): Promise<FileResponseDto> {
+  async clone(
+    @CurrentUser() user: User,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<FileResponseDto> {
     return this.cloneFileUseCase.execute(new CloneFileCommand(user.id, id));
   }
 }
-

@@ -8,7 +8,7 @@ import { ImageProcessingQueueService } from '../interfaces/image-processing-queu
 import { v4 as uuidv4 } from 'uuid';
 import { UploadFileCommand } from '../dto/upload-file.command';
 import { FileMovePolicy } from '../../domain/policies/file-file.policy';
-import { CanNotMoveFileToFilderError as CanNotMoveFileToFolderError } from '../../domain/errors/can-not-move-file.error';
+import { CanNotMoveFileToFolderError } from '../../domain/errors/can-not-move-file.error';
 
 @Injectable()
 export class UploadFileUseCase {

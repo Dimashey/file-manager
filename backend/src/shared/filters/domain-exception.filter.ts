@@ -1,10 +1,11 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, Logger } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, Logger } from '@nestjs/common';
 
 import { Response } from 'express';
 import { EmailAlreadyExistsError } from '../../modules/auth/domain/errors/email-already-exists.error';
 import { InvalidCredentialsError } from '../../modules/auth/domain/errors/invalid-credentials.error';
 import { FileNotFoundError } from '../../modules/file/domain/errors/file-not-found.error';
 import { SharedFileNotFoundError } from '../../modules/file/domain/errors/shared-file-not-found.error';
+import { CanNotMoveFileToFolderError } from '../../modules/file/domain/errors/can-not-move-file.error';
 import { SharedFolderNotFoundError } from '../../modules/folder/domain/errors/shared-folder-not-found.error';
 import { FolderCannotBeParentOfItselfError } from '../../modules/folder/domain/errors/folder-cannot-be-parent-of-itself.error';
 import { FolderNameCannotBeEmptyError } from '../../modules/folder/domain/errors/folder-name-cannot-be-empty.error';
@@ -42,6 +43,10 @@ export class DomainExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof SharedFileNotFoundError) {
       return res.status(404).json({ message: exception.message });
+    }
+
+    if (exception instanceof CanNotMoveFileToFolderError) {
+      return res.status(400).json({ message: exception.message });
     }
 
     if (exception instanceof SharedFolderNotFoundError) {

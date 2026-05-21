@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Public } from '../../../shared/decorators/public.decorator';
 import { CreateFolderDto } from './dto/create-folder.dto';
@@ -64,7 +74,7 @@ export class FolderController {
   }
 
   @Get(':id')
-  getFolder(@CurrentUser() user: User, @Param('id') id: string) {
+  getFolder(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string) {
     return this.get.execute(new GetFolderCommand(user.id, id));
   }
 
@@ -74,17 +84,23 @@ export class FolderController {
   }
 
   @Patch(':id')
-  updateFolder(@CurrentUser() user: User, @Param('id') id: string, @Body() dto: UpdateFolderDto) {
-    return this.update.execute(new UpdateFolderCommand(user.id, id, dto.name, dto.parentId, dto.isPublic));
+  updateFolder(
+    @CurrentUser() user: User,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateFolderDto,
+  ) {
+    return this.update.execute(
+      new UpdateFolderCommand(user.id, id, dto.name, dto.parentId, dto.isPublic),
+    );
   }
 
   @Delete(':id')
-  deleteFolder(@CurrentUser() user: User, @Param('id') id: string) {
+  deleteFolder(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string) {
     return this.remove.execute(new DeleteFolderCommand(user.id, id));
   }
 
   @Post(':id/clone')
-  cloneFolder(@CurrentUser() user: User, @Param('id') id: string) {
+  cloneFolder(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string) {
     return this.clone.execute(new CloneFolderCommand(user.id, id));
   }
 }
