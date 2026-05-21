@@ -3,6 +3,14 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { DomainExceptionFilter } from './shared/filters/domain-exception.filter';
 
+process.on('uncaughtException', (err) => {
+  console.log('UNCAUGHT:', err);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.log('REJECTION:', err);
+});
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
@@ -12,6 +20,7 @@ async function bootstrap() {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5174',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   const swaggerConfig = new DocumentBuilder()
