@@ -22,9 +22,11 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import type { Folder } from '../../types/folder';
 import { useFolders, useUpdateFolder, useDeleteFolder, useCloneFolder } from '../../hooks/useFolders';
+import { useFiles } from '../../hooks/useFiles';
 import { CreateFolderDialog } from '../dialogs/CreateFolderDialog';
 import { RenameDialog } from '../dialogs/RenameDialog';
 import { ConfirmDeleteDialog } from '../dialogs/ConfirmDeleteDialog';
+import { FileTreeItem } from './FileTreeItem';
 
 interface FolderTreeItemProps {
   folder: Folder;
@@ -41,6 +43,7 @@ export function FolderTreeItem({ folder, depth, selectedId, onSelect }: FolderTr
   const { data: children, isLoading: childrenLoading } = useFolders(
     expanded ? folder.id : undefined,
   );
+  const { data: childFiles } = useFiles(expanded ? folder.id : undefined);
   const { mutate: updateFolder, isPending: renaming } = useUpdateFolder();
   const { mutate: deleteFolder, isPending: deleting } = useDeleteFolder();
   const { mutate: cloneFolder } = useCloneFolder();
@@ -135,6 +138,9 @@ export function FolderTreeItem({ folder, depth, selectedId, onSelect }: FolderTr
             selectedId={selectedId}
             onSelect={onSelect}
           />
+        ))}
+        {childFiles?.map((file) => (
+          <FileTreeItem key={file.id} file={file} depth={depth + 1} />
         ))}
       </Collapse>
 

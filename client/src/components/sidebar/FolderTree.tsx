@@ -9,7 +9,9 @@ import {
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { useFolders } from '../../hooks/useFolders';
+import { useFiles } from '../../hooks/useFiles';
 import { FolderTreeItem } from './FolderTreeItem';
+import { FileTreeItem } from './FileTreeItem';
 import { CreateFolderDialog } from '../dialogs/CreateFolderDialog';
 
 interface FolderTreeProps {
@@ -19,6 +21,7 @@ interface FolderTreeProps {
 
 export function FolderTree({ selectedFolderId, onSelect }: FolderTreeProps) {
   const { data: rootFolders, isLoading } = useFolders();
+  const { data: rootFiles } = useFiles();
   const [createOpen, setCreateOpen] = useState(false);
 
   return (
@@ -88,9 +91,13 @@ export function FolderTree({ selectedFolderId, onSelect }: FolderTreeProps) {
           />
         ))}
 
-        {!isLoading && rootFolders?.length === 0 && (
+        {rootFiles?.map((file) => (
+          <FileTreeItem key={file.id} file={file} depth={0} />
+        ))}
+
+        {!isLoading && rootFolders?.length === 0 && rootFiles?.length === 0 && (
           <Typography variant="caption" sx={{ display: 'block', px: 2, py: 1, color: 'text.disabled' }}>
-            No folders yet
+            No items yet
           </Typography>
         )}
       </Box>
