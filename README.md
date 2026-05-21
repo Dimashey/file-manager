@@ -1,49 +1,83 @@
-# File Manager Project
+# File Manager
 
-A simple service for storing files with hierarchical management and sharing capabilities.
+A full-stack application for storing and managing files with hierarchical folder structure and sharing capabilities.
+
+## Architecture
+
+| Component | Technology | Port |
+|-----------|------------|------|
+| **Backend** | NestJS (Node.js, TypeScript) | `3001` |
+| **Frontend** | React 19 + Vite (TypeScript) | `5174` |
+| **Database** | PostgreSQL 16 | `5432` |
+| **Object Storage** | MinIO | `9000` / `9001` (console) |
+| **Queue / Cache** | Redis 7 | `6379` |
+
+### Backend modules
+
+- **Auth** — JWT-based registration and login
+- **Files** — upload, download, delete, and share files (stored in MinIO)
+- **Folders** — create and navigate a hierarchical folder tree
+
+### Frontend
+
+React SPA using MUI components, React Query for data fetching, React Hook Form + Zod for forms, and drag-and-drop via dnd-kit.
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (v22 or later)
+- [Node.js](https://nodejs.org/) v22+
 - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
-- [Make](https://www.gnu.org/software/make/) (optional, but recommended)
 
 ## Setup and Start
 
-The easiest way to start the project is using the provided `Makefile`.
+### 1. Configure environment
 
-### 1. Initial Setup
-This will create your `.env` file and install backend dependencies.
 ```bash
-make setup
+cp .env.example .env
 ```
 
-### 2. Start the Project
-This will start the infrastructure (Postgres, MinIO, Redis) and the backend in Docker containers.
+Edit `.env` if you need to change any defaults (JWT secret, credentials, ports).
+
+### 2. Start all services
+
 ```bash
-make start
+docker-compose up
 ```
 
-Once started, the API will be available at `http://localhost:3001`.
-The **Swagger Documentation** can be accessed at: `http://localhost:3001/api/docs`.
+This starts PostgreSQL, MinIO, Redis, the backend, and the frontend — all in Docker with hot-reload enabled.
 
-### 3. Stop the Project
+| URL | Description |
+|-----|-------------|
+| `http://localhost:5174` | Frontend |
+| `http://localhost:3001` | Backend API |
+| `http://localhost:3001/api/docs` | Swagger / OpenAPI docs |
+| `http://localhost:9001` | MinIO console |
+
+### 3. Stop
+
 ```bash
-make stop
+docker-compose down
 ```
 
-## Manual Setup (without Make)
+## Running tests
 
-If you don't have `make` installed, follow these steps:
+```bash
+# Backend
+cd backend && npm test
 
-1. Copy the environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-2. Start the services:
-   ```bash
-   docker-compose up -d --build
-   ```
+# Frontend
+cd client && npm test
+```
 
----
-*Developed using Gemini CLI*
+## Environment variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DB_USERNAME` | `filemanager` | PostgreSQL user |
+| `DB_PASSWORD` | `filemanager` | PostgreSQL password |
+| `DB_DATABASE` | `filemanager` | PostgreSQL database name |
+| `JWT_SECRET` | — | Secret for signing JWT tokens |
+| `MINIO_ACCESS_KEY` | `minioadmin` | MinIO access key |
+| `MINIO_SECRET_KEY` | `minioadmin` | MinIO secret key |
+| `MINIO_BUCKET` | `file-manager` | MinIO bucket name |
+| `PORT` | `3001` | Backend port |
+| `CORS_ORIGIN` | `http://localhost:5173` | Allowed CORS origin |
