@@ -51,6 +51,11 @@ import { CloneFileUseCase } from '../application/use-cases/clone-file.use-case';
 import { CloneFileCommand } from '../application/dto/clone-file.command';
 import { SearchFilesUseCase } from '../application/use-cases/search-files.use-case';
 import { SearchFilesCommand } from '../application/dto/search-files.command';
+import { GetPublicFileUseCase } from '../application/use-cases/get-public-file.use-case';
+import { GetPublicFileCommand } from '../application/dto/get-public-file.command';
+import { DownloadPublicFileUseCase } from '../application/use-cases/download-public-file.use-case';
+import { DownloadPublicFileCommand } from '../application/dto/download-public-file.command';
+import { Public } from '../../../shared/decorators/public.decorator';
 
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
 
@@ -69,7 +74,33 @@ export class FileController {
     private readonly deleteFileUseCase: DeleteFileUseCase,
     private readonly cloneFileUseCase: CloneFileUseCase,
     private readonly searchFilesUseCase: SearchFilesUseCase,
+    private readonly getPublicFileUseCase: GetPublicFileUseCase,
+    private readonly downloadPublicFileUseCase: DownloadPublicFileUseCase,
   ) {}
+
+  @Public()
+  @Get('public/:id')
+  @ApiOperation({ summary: 'Get public file metadata' })
+  async getPublicFile(@Param('id', ParseUUIDPipe) id: string): Promise<FileResponseDto> {
+    return this.getPublicFileUseCase.execute(new GetPublicFileCommand(id));
+  }
+
+  @Public()
+  @Get('public/:id/download')
+  @ApiOperation({ summary: 'Download public file content' })
+  async downloadPublicFile(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    const { stream, file } = await this.downloadPublicFileUseCase.execute(
+      new DownloadPublicFileCommand(id),
+    );
+    res.set({
+      'Content-Type': file.mimeType,
+      'Content-Disposition': `attachment; filename="${file.originalName}"`,
+    });
+    stream.pipe(res);
+  }
 
   @Get()
   @ApiOperation({

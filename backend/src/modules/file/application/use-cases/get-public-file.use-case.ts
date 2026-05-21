@@ -1,0 +1,17 @@
+import { Injectable } from '@nestjs/common';
+import { FileRepository } from '../../domain/repositories/file.repository';
+import { SharedFileNotFoundError } from '../../domain/errors/shared-file-not-found.error';
+import { GetPublicFileCommand } from '../dto/get-public-file.command';
+
+@Injectable()
+export class GetPublicFileUseCase {
+  constructor(private readonly fileRepo: FileRepository) {}
+
+  async execute(command: GetPublicFileCommand) {
+    const file = await this.fileRepo.findById(command.fileId);
+    if (!file || !file.isPublic) {
+      throw new SharedFileNotFoundError();
+    }
+    return file;
+  }
+}

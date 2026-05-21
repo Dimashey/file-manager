@@ -4,5 +4,6 @@ export class UpdateFolderCommand {
     public readonly folderId: string,
     public readonly name?: string,
     public readonly parentId?: string | null,
+    public readonly isPublic?: boolean,
   ) {}
 }

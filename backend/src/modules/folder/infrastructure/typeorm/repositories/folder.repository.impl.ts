@@ -79,4 +79,13 @@ export class TypeOrmFolderRepository implements FolderRepository {
 
     return folders.map(FolderMapper.toDomain);
   }
+
+  async findSubfolders(parentId: string | null): Promise<Folder[]> {
+    const folders = await this.repo.find({
+      where: { parentId: parentId ?? IsNull() },
+      order: { position: 'ASC', createdAt: 'ASC' },
+    });
+
+    return folders.map(FolderMapper.toDomain);
+  }
 }

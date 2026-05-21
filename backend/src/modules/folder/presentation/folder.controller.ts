@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { Public } from '../../../shared/decorators/public.decorator';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 import { ReorderDto } from './dto/reorder.dto';
@@ -15,6 +16,8 @@ import { UpdateFolderCommand } from '../application/dto/update-folder.command';
 import { CloneFolderUseCase } from '../application/use-cases/clone-folder.use-case';
 import { SearchFoldersUseCase } from '../application/use-cases/search-folders.use-case';
 import { SearchFoldersCommand } from '../application/dto/search-folders.command';
+import { GetPublicFolderUseCase } from '../application/use-cases/get-public-folder.use-case';
+import { GetPublicFolderCommand } from '../application/dto/get-public-folder.command';
 import { CreateFolderUseCase } from '../application/use-cases/create-folder.use-case';
 import { DeleteFolderUseCase } from '../application/use-cases/delete-folder.use-case';
 import { GetFolderUseCase } from '../application/use-cases/get-folder.use-case';
@@ -35,7 +38,15 @@ export class FolderController {
     private readonly remove: DeleteFolderUseCase,
     private readonly clone: CloneFolderUseCase,
     private readonly searchUseCase: SearchFoldersUseCase,
+    private readonly getPublicFolderUseCase: GetPublicFolderUseCase,
   ) {}
+
+  @Public()
+  @Get('public/:id')
+  @ApiOperation({ summary: 'Get public folder details and contents' })
+  getPublicFolder(@Param('id', ParseUUIDPipe) id: string) {
+    return this.getPublicFolderUseCase.execute(new GetPublicFolderCommand(id));
+  }
 
   @Get()
   listFolders(@CurrentUser() user: User, @Query('parentId') parentId?: string) {
@@ -64,7 +75,7 @@ export class FolderController {
 
   @Patch(':id')
   updateFolder(@CurrentUser() user: User, @Param('id') id: string, @Body() dto: UpdateFolderDto) {
-    return this.update.execute(new UpdateFolderCommand(user.id, id, dto.name, dto.parentId));
+    return this.update.execute(new UpdateFolderCommand(user.id, id, dto.name, dto.parentId, dto.isPublic));
   }
 
   @Delete(':id')

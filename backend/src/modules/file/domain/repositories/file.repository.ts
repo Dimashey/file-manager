@@ -17,4 +17,6 @@ export abstract class FileRepository {
   ): Promise<void>;
 
   abstract search(ownerId: string, name: string): Promise<File[]>;
+
+  abstract findByFolder(folderId: string | null): Promise<File[]>;
 }

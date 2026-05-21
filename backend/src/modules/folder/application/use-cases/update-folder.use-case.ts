@@ -16,6 +16,7 @@ export class UpdateFolderUseCase {
     }
 
     if (cmd.name) folder.rename(cmd.name);
+    if (cmd.isPublic !== undefined) folder.isPublic = cmd.isPublic;
     if (cmd.parentId !== undefined) {
       if (cmd.parentId) {
         const parent = await this.repo.findById(cmd.parentId);

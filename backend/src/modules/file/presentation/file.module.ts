@@ -14,6 +14,8 @@ import { DownloadFileUseCase } from '../application/use-cases/download-file.use-
 import { DeleteFileUseCase } from '../application/use-cases/delete-file.use-case';
 import { CloneFileUseCase } from '../application/use-cases/clone-file.use-case';
 import { SearchFilesUseCase } from '../application/use-cases/search-files.use-case';
+import { GetPublicFileUseCase } from '../application/use-cases/get-public-file.use-case';
+import { DownloadPublicFileUseCase } from '../application/use-cases/download-public-file.use-case';
 import { FileStorageService } from '../application/interfaces/file-storage.service';
 import { MinioStorageService } from '../infrastructure/storage/minio/minio-storage.service';
 import { ImageProcessingQueueService } from '../application/interfaces/image-processing-queue.service';
@@ -60,6 +62,8 @@ import { FileMovePolicyImpl } from '../application/policies/file-move.policy.imp
     DeleteFileUseCase,
     CloneFileUseCase,
     SearchFilesUseCase,
+    GetPublicFileUseCase,
+    DownloadPublicFileUseCase,
   ],
   exports: [TypeOrmModule, FileStorageService],
 })

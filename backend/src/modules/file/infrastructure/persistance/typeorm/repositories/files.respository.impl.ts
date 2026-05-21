@@ -66,4 +66,13 @@ export class TypeOrmFileRepository implements FileRepository {
 
     return files.map(FileMapper.toDomain);
   }
+
+  async findByFolder(folderId: string | null): Promise<File[]> {
+    const files = await this.repo.find({
+      where: { folderId: folderId ?? IsNull() },
+      order: { position: 'ASC', createdAt: 'ASC' },
+    });
+
+    return files.map(FileMapper.toDomain);
+  }
 }

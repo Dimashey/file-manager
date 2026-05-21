@@ -12,15 +12,20 @@ import { UpdateFolderUseCase } from '../application/use-cases/update-folder.use-
 import { DeleteFolderUseCase } from '../application/use-cases/delete-folder.use-case';
 import { CloneFolderUseCase } from '../application/use-cases/clone-folder.use-case';
 import { SearchFoldersUseCase } from '../application/use-cases/search-folders.use-case';
+import { GetPublicFolderUseCase } from '../application/use-cases/get-public-folder.use-case';
 import { FileMovePolicy } from 'src/modules/file/domain/policies/file-file.policy';
 import { FileMovePolicyImpl } from 'src/modules/file/application/policies/file-move.policy.impl';
+import { FileRepository } from 'src/modules/file/domain/repositories/file.repository';
+import { TypeOrmFileRepository } from 'src/modules/file/infrastructure/persistance/typeorm/repositories/files.respository.impl';
+import { FileOrm } from 'src/modules/file/infrastructure/persistance/typeorm/entities/file-orm.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FolderOrm])],
+  imports: [TypeOrmModule.forFeature([FolderOrm, FileOrm])],
   controllers: [FolderController],
   providers: [
     { provide: FolderRepository, useClass: TypeOrmFolderRepository },
     { provide: FileMovePolicy, useClass: FileMovePolicyImpl },
+    { provide: FileRepository, useClass: TypeOrmFileRepository },
 
     ListFoldersUseCase,
     CreateFolderUseCase,
@@ -30,6 +35,7 @@ import { FileMovePolicyImpl } from 'src/modules/file/application/policies/file-m
     DeleteFolderUseCase,
     CloneFolderUseCase,
     SearchFoldersUseCase,
+    GetPublicFolderUseCase,
   ],
   exports: [TypeOrmModule, FolderRepository],
 })

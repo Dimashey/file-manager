@@ -16,4 +16,6 @@ export abstract class FolderRepository {
   abstract findChildren(parentId: string, userId: string): Promise<Folder[]>;
 
   abstract search(userId: string, name: string): Promise<Folder[]>;
+
+  abstract findSubfolders(parentId: string | null): Promise<Folder[]>;
 }
