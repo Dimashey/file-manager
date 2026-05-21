@@ -17,10 +17,12 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import ShareIcon from '@mui/icons-material/Share';
 import type { Folder } from '../../types/folder';
 import { useUpdateFolder, useDeleteFolder, useCloneFolder } from '../../hooks/useFolders';
 import { RenameDialog } from '../dialogs/RenameDialog';
 import { ConfirmDeleteDialog } from '../dialogs/ConfirmDeleteDialog';
+import { ShareDialog } from '../dialogs/ShareDialog';
 
 interface FolderCardProps {
   folder: Folder;
@@ -32,7 +34,7 @@ export function FolderCard({ folder, onNavigate }: FolderCardProps) {
     id: folder.id,
   });
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
-  const [dialog, setDialog] = useState<'rename' | 'delete' | null>(null);
+  const [dialog, setDialog] = useState<'rename' | 'delete' | 'share' | null>(null);
 
   const { mutate: updateFolder, isPending: renaming } = useUpdateFolder();
   const { mutate: deleteFolder, isPending: deleting } = useDeleteFolder();
@@ -70,14 +72,22 @@ export function FolderCard({ folder, onNavigate }: FolderCardProps) {
           cursor: isDragging ? 'grabbing' : 'pointer',
           opacity: isDragging ? 0.6 : 1,
           userSelect: 'none',
-          '&:hover': { bgcolor: 'action.hover' },
+          transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          '&:hover': {
+            bgcolor: 'background.paper',
+            transform: 'translateY(-4px)',
+            boxShadow: (theme) => theme.palette.mode === 'dark'
+              ? '0 8px 30px rgba(0, 0, 0, 0.4)' 
+              : '0 8px 30px rgba(165, 180, 203, 0.15)',
+            borderColor: 'primary.main',
+          },
           '&:hover .folder-card-menu-btn': { visibility: 'visible' },
         }}
         {...attributes}
         {...listeners}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <FolderIcon sx={{ fontSize: 32, color: 'warning.main' }} />
+          <FolderIcon sx={{ fontSize: 32, color: 'primary.main' }} />
           <Tooltip title="Options">
             <IconButton
               size="small"
@@ -113,6 +123,10 @@ export function FolderCard({ folder, onNavigate }: FolderCardProps) {
           <ListItemIcon><ContentCopyIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Clone</ListItemText>
         </MenuItem>
+        <MenuItem onClick={() => { handleMenuClose(); setDialog('share'); }}>
+          <ListItemIcon><ShareIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Share</ListItemText>
+        </MenuItem>
         <MenuItem onClick={() => { handleMenuClose(); setDialog('delete'); }} sx={{ color: 'error.main' }}>
           <ListItemIcon sx={{ color: 'error.main' }}><DeleteOutlinedIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Delete</ListItemText>
@@ -134,6 +148,16 @@ export function FolderCard({ folder, onNavigate }: FolderCardProps) {
         description={`Delete "${folder.name}" and all its contents? This cannot be undone.`}
         isLoading={deleting}
         onConfirm={handleDelete}
+        onClose={() => setDialog(null)}
+      />
+
+      <ShareDialog
+        open={dialog === 'share'}
+        title={`Share "${folder.name}"`}
+        isPublicInitial={folder.isPublic}
+        shareUrl={`http://localhost:5174/shared/folder/${folder.id}`}
+        isLoading={renaming}
+        onToggleShare={(isPublic) => updateFolder({ id: folder.id, payload: { isPublic } })}
         onClose={() => setDialog(null)}
       />
     </>

@@ -17,8 +17,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DownloadIcon from '@mui/icons-material/Download';
-import PublicIcon from '@mui/icons-material/Public';
-import LockIcon from '@mui/icons-material/Lock';
+import ShareIcon from '@mui/icons-material/Share';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import type { FileItem } from '../../types/file';
 import { filesApi } from '../../api/files.api';
@@ -27,6 +26,7 @@ import { getFileIcon } from '../../utils/fileIcons';
 import { formatBytes } from '../../utils/formatBytes';
 import { RenameDialog } from '../dialogs/RenameDialog';
 import { ConfirmDeleteDialog } from '../dialogs/ConfirmDeleteDialog';
+import { ShareDialog } from '../dialogs/ShareDialog';
 
 interface FileCardProps {
   file: FileItem;
@@ -37,7 +37,7 @@ export function FileCard({ file }: FileCardProps) {
     id: file.id,
   });
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
-  const [dialog, setDialog] = useState<'rename' | 'delete' | null>(null);
+  const [dialog, setDialog] = useState<'rename' | 'delete' | 'share' | null>(null);
 
   const { mutate: updateFile, isPending: renaming } = useUpdateFile();
   const { mutate: deleteFile, isPending: deleting } = useDeleteFile();
@@ -56,11 +56,6 @@ export function FileCard({ file }: FileCardProps) {
 
   const handleDelete = () => {
     deleteFile(file.id, { onSuccess: () => setDialog(null) });
-  };
-
-  const handleTogglePublic = () => {
-    updateFile({ id: file.id, payload: { isPublic: !file.isPublic } });
-    handleMenuClose();
   };
 
   const handleDownload = () => {
@@ -85,6 +80,15 @@ export function FileCard({ file }: FileCardProps) {
           opacity: isDragging ? 0.6 : 1,
           position: 'relative',
           userSelect: 'none',
+          transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          '&:hover': {
+            bgcolor: 'background.paper',
+            transform: 'translateY(-4px)',
+            boxShadow: (theme) => theme.palette.mode === 'dark'
+              ? '0 8px 30px rgba(0, 0, 0, 0.4)' 
+              : '0 8px 30px rgba(165, 180, 203, 0.15)',
+            borderColor: 'primary.main',
+          },
           '&:hover .file-menu-btn': { visibility: 'visible' },
         }}
         {...attributes}
@@ -141,13 +145,9 @@ export function FileCard({ file }: FileCardProps) {
           <ListItemIcon><DownloadIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Download</ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleTogglePublic}>
-          <ListItemIcon>
-            {file.isPublic
-              ? <LockIcon fontSize="small" />
-              : <PublicIcon fontSize="small" />}
-          </ListItemIcon>
-          <ListItemText>{file.isPublic ? 'Make Private' : 'Make Public'}</ListItemText>
+        <MenuItem onClick={() => { handleMenuClose(); setDialog('share'); }}>
+          <ListItemIcon><ShareIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Share</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => { handleMenuClose(); setDialog('delete'); }} sx={{ color: 'error.main' }}>
           <ListItemIcon sx={{ color: 'error.main' }}><DeleteOutlinedIcon fontSize="small" /></ListItemIcon>
@@ -170,6 +170,16 @@ export function FileCard({ file }: FileCardProps) {
         description={`Delete "${file.name}"? This cannot be undone.`}
         isLoading={deleting}
         onConfirm={handleDelete}
+        onClose={() => setDialog(null)}
+      />
+
+      <ShareDialog
+        open={dialog === 'share'}
+        title={`Share "${file.name}"`}
+        isPublicInitial={file.isPublic}
+        shareUrl={`http://localhost:5174/shared/file/${file.id}`}
+        isLoading={renaming}
+        onToggleShare={(isPublic) => updateFile({ id: file.id, payload: { isPublic } })}
         onClose={() => setDialog(null)}
       />
     </>

@@ -3,13 +3,14 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider, MutationCache, QueryCache } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import theme from './theme';
+import { ThemeModeProvider } from './context/ThemeModeContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { PublicFilePage } from './pages/PublicFilePage';
+import { PublicFolderPage } from './pages/PublicFolderPage';
 import { AppNotifier } from './components/layout/AppNotifier';
 import { notify } from './utils/notify';
 
@@ -32,6 +33,8 @@ const queryClient = new QueryClient({
 const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   { path: '/register', element: <RegisterPage /> },
+  { path: '/shared/file/:id', element: <PublicFilePage /> },
+  { path: '/shared/folder/:id', element: <PublicFolderPage /> },
   {
     element: <ProtectedRoute />,
     children: [{ path: '/', element: <DashboardPage /> }],
@@ -42,13 +45,12 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <ThemeModeProvider>
         <AppNotifier />
         <AuthProvider>
           <RouterProvider router={router} />
         </AuthProvider>
-      </ThemeProvider>
+      </ThemeModeProvider>
     </QueryClientProvider>
   </StrictMode>,
 );

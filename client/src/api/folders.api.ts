@@ -34,3 +34,7 @@ export const foldersApi = {
   search: (name: string) =>
     api.get<Folder[]>('/folders/search', { params: { name } }).then((r) => r.data),
 };
+
+export const publicFoldersApi = {
+  getContents: (id: string) => api.get(`/folders/public/${id}`).then((r) => r.data),
+};

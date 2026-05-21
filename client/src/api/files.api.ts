@@ -45,3 +45,8 @@ export const filesApi = {
     URL.revokeObjectURL(url);
   },
 };
+
+export const publicFilesApi = {
+  getMetadata: (id: string) => api.get(`/files/public/${id}`).then((r) => r.data),
+  getDownloadUrl: (id: string) => `http://localhost:3001/api/files/public/${id}/download`,
+};

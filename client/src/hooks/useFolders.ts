@@ -1,10 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { foldersApi, type CreateFolderPayload, type UpdateFolderPayload } from '../api/folders.api';
-import type { Folder, FolderReorderItem } from '../types/folder';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  foldersApi,
+  type CreateFolderPayload,
+  type UpdateFolderPayload,
+} from "../api/folders.api";
+import type { Folder, FolderReorderItem } from "../types/folder";
 
 const folderKeys = {
-  all: ['folders'] as const,
-  list: (parentId?: string) => ['folders', parentId ?? null] as const,
+  all: ["folders"] as const,
+  list: (parentId?: string) => ["folders", parentId ?? null] as const,
 };
 
 export function useFolders(parentId?: string, options?: { enabled?: boolean }) {
@@ -17,6 +21,7 @@ export function useFolders(parentId?: string, options?: { enabled?: boolean }) {
 
 export function useCreateFolder() {
   const qc = useQueryClient();
+
   return useMutation({
     mutationFn: (payload: CreateFolderPayload) => foldersApi.create(payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: folderKeys.all }),
@@ -26,8 +31,13 @@ export function useCreateFolder() {
 export function useUpdateFolder() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: UpdateFolderPayload }) =>
-      foldersApi.update(id, payload),
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateFolderPayload;
+    }) => foldersApi.update(id, payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: folderKeys.all }),
   });
 }

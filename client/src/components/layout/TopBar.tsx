@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   AppBar,
   Avatar,
+  Box,
   IconButton,
   ListItemIcon,
   Menu,
@@ -12,8 +13,11 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import { useCurrentUser } from '../../hooks/useAuth';
 import { SearchBar } from '../search/SearchBar';
+import { useThemeMode } from '../../context/ThemeModeContext';
 
 const DRAWER_WIDTH = 260;
 
@@ -24,6 +28,7 @@ interface TopBarProps {
 
 export function TopBar({ onMenuToggle, onFolderNavigate }: TopBarProps) {
   const { currentUser, logout } = useCurrentUser();
+  const { mode, toggleThemeMode } = useThemeMode();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const initials = currentUser?.name
@@ -59,9 +64,17 @@ export function TopBar({ onMenuToggle, onFolderNavigate }: TopBarProps) {
 
         <SearchBar onFolderNavigate={onFolderNavigate} />
 
+        <Box sx={{ flexGrow: 1 }} />
+
+        <Tooltip title={mode === 'light' ? 'Dark Mode' : 'Light Mode'}>
+          <IconButton onClick={toggleThemeMode} color="inherit" sx={{ mr: 1 }}>
+            {mode === 'light' ? <DarkModeOutlinedIcon /> : <LightModeOutlinedIcon />}
+          </IconButton>
+        </Tooltip>
+
         <Tooltip title={currentUser?.name ?? 'Account'}>
           <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} size="small">
-            <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.75rem' }}>
+            <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', color: 'primary.contrastText', fontSize: '0.75rem', fontWeight: 600 }}>
               {initials}
             </Avatar>
           </IconButton>
