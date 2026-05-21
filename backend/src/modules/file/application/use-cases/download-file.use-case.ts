@@ -11,6 +11,14 @@ export class DownloadFileUseCase {
     private readonly storage: FileStorageService,
   ) {}
 
+  /**
+   * Downloads a file owned by a user.
+   * Validates ownership and returns a read stream along with file metadata.
+   *
+   * @param dto - The download command containing user ID and file ID.
+   * @returns An object containing the download stream and the file entity.
+   * @throws {FileNotFoundError} If the file does not exist or does not belong to the user.
+   */
   async execute(dto: DownloadFileCommand) {
     const file = await this.fileRepo.findById(dto.fileId);
 

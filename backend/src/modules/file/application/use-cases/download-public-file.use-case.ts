@@ -11,6 +11,14 @@ export class DownloadPublicFileUseCase {
     private readonly storageService: FileStorageService,
   ) {}
 
+  /**
+   * Downloads a public file.
+   * Validates that the file exists and is marked as public, then returns its read stream.
+   *
+   * @param command - The command containing the file ID.
+   * @returns An object containing the download stream and the file entity.
+   * @throws {SharedFileNotFoundError} If the file is not found or is not public.
+   */
   async execute(command: DownloadPublicFileCommand) {
     const file = await this.fileRepo.findById(command.fileId);
     if (!file || !file.isPublic) {

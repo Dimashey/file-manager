@@ -6,6 +6,11 @@ import { ReorderFilesCommand } from '../commands/reorder.command';
 export class ReorderFilesUseCase {
   constructor(private readonly fileRepo: FileRepository) {}
 
+  /**
+   * Reorders position rankings for files owned by a user.
+   *
+   * @param dto - The reordering items and user ID.
+   */
   async execute(dto: ReorderFilesCommand) {
     await this.fileRepo.updatePositions(dto.items, dto.userId);
   }

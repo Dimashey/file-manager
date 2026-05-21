@@ -9,6 +9,14 @@ import { InvalidParentFolderError } from '../../domain/errors/invalid-parent-fol
 export class CreateFolderUseCase {
   constructor(private repo: FolderRepository) {}
 
+  /**
+   * Creates a new folder for a user.
+   * If a parent folder ID is provided, validates that the parent folder exists and belongs to the user.
+   *
+   * @param cmd - The command details for creating the folder.
+   * @returns The newly created folder entity.
+   * @throws {InvalidParentFolderError} If the parent folder does not exist or does not belong to the user.
+   */
   async execute(cmd: CreateFolderCommand) {
     if (cmd.parentId) {
       const parent = await this.repo.findById(cmd.parentId);

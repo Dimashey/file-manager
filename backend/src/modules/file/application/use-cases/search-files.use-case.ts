@@ -6,6 +6,12 @@ import { SearchFilesCommand } from '../commands/search-files.command';
 export class SearchFilesUseCase {
   constructor(private readonly fileRepo: FileRepository) {}
 
+  /**
+   * Searches files owned by a user by their display name.
+   *
+   * @param command - The search query containing user ID and name query.
+   * @returns An array of matching file entities.
+   */
   execute(command: SearchFilesCommand) {
     return this.fileRepo.search(command.userId, command.name);
   }

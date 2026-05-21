@@ -31,7 +31,7 @@ export class TypeOrmFileRepository implements FileRepository {
       },
     });
 
-    return files.map(FileMapper.toDomain);
+    return files.map((f) => FileMapper.toDomain(f));
   }
 
   async save(file: File): Promise<File> {
@@ -64,7 +64,7 @@ export class TypeOrmFileRepository implements FileRepository {
       order: { position: 'ASC', createdAt: 'ASC' },
     });
 
-    return files.map(FileMapper.toDomain);
+    return files.map((f) => FileMapper.toDomain(f));
   }
 
   async findByFolder(folderId: string | null): Promise<File[]> {
@@ -73,6 +73,6 @@ export class TypeOrmFileRepository implements FileRepository {
       order: { position: 'ASC', createdAt: 'ASC' },
     });
 
-    return files.map(FileMapper.toDomain);
+    return files.map((f) => FileMapper.toDomain(f));
   }
 }

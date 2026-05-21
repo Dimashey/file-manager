@@ -9,6 +9,13 @@ import { FolderNotFoundError } from '../../domain/errors/folder-not-found.error'
 export class CloneFolderUseCase {
   constructor(private repo: FolderRepository) {}
 
+  /**
+   * Clones a folder and all of its contents (subfolders) recursively for a user.
+   *
+   * @param cmd The command containing the user ID and the folder ID to clone.
+   * @returns The newly cloned root-level folder.
+   * @throws {FolderNotFoundError} If the folder does not exist or does not belong to the user.
+   */
   async execute(cmd: CloneFolderCommand) {
     const source = await this.repo.findById(cmd.folderId);
 

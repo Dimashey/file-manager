@@ -11,6 +11,13 @@ export class DeleteFileUseCase {
     private readonly storage: FileStorageService,
   ) {}
 
+  /**
+   * Deletes a file by removing its physical storage artifacts (main file and thumbnail if any)
+   * and deleting its record from the database.
+   *
+   * @param dto Command containing the userId and fileId to delete
+   * @throws FileNotFoundError if the file doesn't exist or is not owned by the user
+   */
   async execute(dto: DeleteFileCommand) {
     const file = await this.fileRepo.findById(dto.fileId);
 

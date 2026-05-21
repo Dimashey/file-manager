@@ -15,6 +15,14 @@ export class RegisterUseCase {
     private readonly tokenService: TokenService,
   ) {}
 
+  /**
+   * Executes the register use case.
+   * Registers a new user with a hashed password after ensuring the email is unique, and generates a JWT access token.
+   *
+   * @param dto - The register command details including email, password, and name.
+   * @returns An object containing the generated JWT access token for the registered user.
+   * @throws {EmailAlreadyExistsError} If the email is already registered.
+   */
   async execute(dto: RegisterCommand): Promise<{ token: string }> {
     const existing = await this.usersRepository.findByEmail(dto.email);
 

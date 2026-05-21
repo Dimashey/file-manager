@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '../src/modules/auth/presentation/auth.controller';
 import { LoginUseCase } from '../src/modules/auth/application/use-cases/login.use-case';

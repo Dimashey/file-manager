@@ -15,4 +15,7 @@ module.exports = {
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
   transformIgnorePatterns: ['node_modules/(?!(uuid)/)'],
+  moduleNameMapper: {
+    '^uuid$': '<rootDir>/test/mocks/uuid.js',
+  },
 };

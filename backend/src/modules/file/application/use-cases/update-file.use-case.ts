@@ -13,6 +13,15 @@ export class UpdateFileUseCase {
     private readonly fileMovePolicy: FileMovePolicy,
   ) {}
 
+  /**
+   * Renames, moves, or changes public status of a file.
+   * Validates folder moves against FileMovePolicy.
+   *
+   * @param cmd - The update command details.
+   * @returns The updated file entity.
+   * @throws {FileNotFoundError} If the file does not exist or is not owned by the user.
+   * @throws {CanNotMoveFileToFolderError} If target folder is invalid or belongs to another user.
+   */
   async execute(cmd: UpdateFileCommand): Promise<File> {
     const file = await this.fileRepo.findById(cmd.fileId);
     if (!file || file.ownerId !== cmd.userId) throw new FileNotFoundError();

@@ -8,6 +8,14 @@ import { InvalidParentFolderError } from '../../domain/errors/invalid-parent-fol
 export class UpdateFolderUseCase {
   constructor(private repo: FolderRepository) {}
 
+  /**
+   * Updates folder properties (rename, move parent, or public status) for a user.
+   *
+   * @param cmd - The update command details.
+   * @returns The updated folder entity.
+   * @throws {FolderNotFoundError} If the folder is not found or is not owned by the user.
+   * @throws {InvalidParentFolderError} If target parent folder is invalid or owned by another user.
+   */
   async execute(cmd: UpdateFolderCommand) {
     const folder = await this.repo.findById(cmd.folderId);
 

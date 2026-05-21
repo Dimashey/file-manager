@@ -19,6 +19,14 @@ export class UploadFileUseCase {
     private readonly fileMovePolicy: FileMovePolicy,
   ) {}
 
+  /**
+   * Uploads a new file to storage and saves metadata in the database.
+   * Triggers compression tasks for image uploads.
+   *
+   * @param dto - The upload command containing file buffer, metadata, and folder context.
+   * @returns The saved file entity.
+   * @throws {CanNotMoveFileToFolderError} If target upload folder belongs to another user.
+   */
   async execute(dto: UploadFileCommand) {
     if (dto.folderId) {
       const folder = await this.fileMovePolicy.canMoveToFolder(dto.folderId, dto.userId);

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Test, TestingModule } from '@nestjs/testing';
 import { FileController } from '../src/modules/file/presentation/file.controller';
 import { ListFilesUseCase } from '../src/modules/file/application/use-cases/list-files.use-case';
@@ -9,6 +10,8 @@ import { CloneFileUseCase } from '../src/modules/file/application/use-cases/clon
 import { SearchFilesUseCase } from '../src/modules/file/application/use-cases/search-files.use-case';
 import { ReorderFilesUseCase } from '../src/modules/file/application/use-cases/reorder.use-case';
 import { DownloadFileUseCase } from '../src/modules/file/application/use-cases/download-file.use-case';
+import { GetPublicFileUseCase } from '../src/modules/file/application/use-cases/get-public-file.use-case';
+import { DownloadPublicFileUseCase } from '../src/modules/file/application/use-cases/download-public-file.use-case';
 import { User } from '../src/modules/auth/domain/user.entity';
 
 const mockUser = { id: 'user-1', email: 'a@b.com', name: 'A' } as User;
@@ -24,6 +27,8 @@ describe('FileController', () => {
   let searchUseCase: jest.Mocked<SearchFilesUseCase>;
   let reorderUseCase: jest.Mocked<ReorderFilesUseCase>;
   let downloadUseCase: jest.Mocked<DownloadFileUseCase>;
+  let getPublicFileUseCase: jest.Mocked<GetPublicFileUseCase>;
+  let downloadPublicFileUseCase: jest.Mocked<DownloadPublicFileUseCase>;
 
   beforeEach(async () => {
     listUseCase = { execute: jest.fn() } as any;
@@ -35,6 +40,8 @@ describe('FileController', () => {
     searchUseCase = { execute: jest.fn() } as any;
     reorderUseCase = { execute: jest.fn() } as any;
     downloadUseCase = { execute: jest.fn() } as any;
+    getPublicFileUseCase = { execute: jest.fn() } as any;
+    downloadPublicFileUseCase = { execute: jest.fn() } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FileController],
@@ -48,6 +55,8 @@ describe('FileController', () => {
         { provide: SearchFilesUseCase, useValue: searchUseCase },
         { provide: ReorderFilesUseCase, useValue: reorderUseCase },
         { provide: DownloadFileUseCase, useValue: downloadUseCase },
+        { provide: GetPublicFileUseCase, useValue: getPublicFileUseCase },
+        { provide: DownloadPublicFileUseCase, useValue: downloadPublicFileUseCase },
       ],
     }).compile();
 
@@ -144,6 +153,42 @@ describe('FileController', () => {
       await controller.reorder(mockUser, { items: [{ id: 'f-1', position: 0 }] });
 
       expect(reorderUseCase.execute).toHaveBeenCalled();
+    });
+  });
+
+  describe('getPublicFile', () => {
+    it('should call getPublicFileUseCase', async () => {
+      const file = { id: 'f-1', name: 'public.jpg' } as any;
+      getPublicFileUseCase.execute.mockResolvedValue(file);
+
+      const result = await controller.getPublicFile('f-1');
+
+      expect(result).toEqual(file);
+      expect(getPublicFileUseCase.execute).toHaveBeenCalled();
+    });
+  });
+
+  describe('downloadPublicFile', () => {
+    it('should call downloadPublicFileUseCase and set headers', async () => {
+      const mockStream = { pipe: jest.fn() };
+      const mockFileInfo = { mimeType: 'image/jpeg', originalName: 'public.jpg' };
+      downloadPublicFileUseCase.execute.mockResolvedValue({
+        stream: mockStream as any,
+        file: mockFileInfo as any,
+      });
+
+      const mockRes = {
+        set: jest.fn(),
+      } as any;
+
+      await controller.downloadPublicFile('f-1', mockRes);
+
+      expect(downloadPublicFileUseCase.execute).toHaveBeenCalled();
+      expect(mockRes.set).toHaveBeenCalledWith({
+        'Content-Type': 'image/jpeg',
+        'Content-Disposition': 'attachment; filename="public.jpg"',
+      });
+      expect(mockStream.pipe).toHaveBeenCalledWith(mockRes);
     });
   });
 });

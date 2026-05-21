@@ -33,7 +33,7 @@ export class TypeOrmFolderRepository implements FolderRepository {
       },
     });
 
-    return folders.map(FolderMapper.toDomain);
+    return folders.map((f) => FolderMapper.toDomain(f));
   }
 
   async save(folder: Folder): Promise<Folder> {
@@ -72,7 +72,7 @@ export class TypeOrmFolderRepository implements FolderRepository {
       },
     });
 
-    return children.map(FolderMapper.toDomain);
+    return children.map((f) => FolderMapper.toDomain(f));
   }
 
   async search(userId: string, name: string): Promise<Folder[]> {
@@ -81,7 +81,7 @@ export class TypeOrmFolderRepository implements FolderRepository {
       order: { position: 'ASC', createdAt: 'ASC' },
     });
 
-    return folders.map(FolderMapper.toDomain);
+    return folders.map((f) => FolderMapper.toDomain(f));
   }
 
   async findSubfolders(parentId: string | null): Promise<Folder[]> {
@@ -90,6 +90,6 @@ export class TypeOrmFolderRepository implements FolderRepository {
       order: { position: 'ASC', createdAt: 'ASC' },
     });
 
-    return folders.map(FolderMapper.toDomain);
+    return folders.map((f) => FolderMapper.toDomain(f));
   }
 }

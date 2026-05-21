@@ -13,6 +13,14 @@ export class LoginUseCase {
     private readonly tokenService: TokenService,
   ) {}
 
+  /**
+   * Executes the login use case.
+   * Validates the user credentials (email and password) and generates a JWT access token.
+   *
+   * @param dto - The login credentials including email and password.
+   * @returns An object containing the generated JWT access token.
+   * @throws {InvalidCredentialsError} If the user is not found or the password is incorrect.
+   */
   async execute(dto: LoginCommand): Promise<{ token: string }> {
     const user = await this.usersRepository.findByEmail(dto.email);
 

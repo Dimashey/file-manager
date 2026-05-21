@@ -13,6 +13,14 @@ export class CloneFileUseCase {
     private readonly storage: FileStorageService,
   ) {}
 
+  /**
+   * Clones an existing file by copying its physical storage content and
+   * creating a new database record under the same owner.
+   *
+   * @param input Object containing the userId and fileId to clone
+   * @returns The cloned file entity saved in the repository
+   * @throws FileNotFoundError if the file doesn't exist or is not owned by the user
+   */
   async execute(input: { userId: string; fileId: string }) {
     const file = await this.fileRepo.findById(input.fileId);
 

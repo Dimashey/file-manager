@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Test, TestingModule } from '@nestjs/testing';
 import { FolderController } from '../src/modules/folder/presentation/folder.controller';
 import { ListFoldersUseCase } from '../src/modules/folder/application/use-cases/list-folders.use-case';
@@ -8,6 +9,7 @@ import { UpdateFolderUseCase } from '../src/modules/folder/application/use-cases
 import { DeleteFolderUseCase } from '../src/modules/folder/application/use-cases/delete-folder.use-case';
 import { CloneFolderUseCase } from '../src/modules/folder/application/use-cases/clone-folder.use-case';
 import { SearchFoldersUseCase } from '../src/modules/folder/application/use-cases/search-folders.use-case';
+import { GetPublicFolderUseCase } from '../src/modules/folder/application/use-cases/get-public-folder.use-case';
 import { User } from '../src/modules/auth/domain/user.entity';
 
 const mockUser = { id: 'user-1', email: 'a@b.com', name: 'A' } as User;
@@ -22,6 +24,7 @@ describe('FolderController', () => {
   let deleteUseCase: jest.Mocked<DeleteFolderUseCase>;
   let cloneUseCase: jest.Mocked<CloneFolderUseCase>;
   let searchUseCase: jest.Mocked<SearchFoldersUseCase>;
+  let getPublicFolderUseCase: jest.Mocked<GetPublicFolderUseCase>;
 
   beforeEach(async () => {
     listUseCase = { execute: jest.fn() } as any;
@@ -32,6 +35,7 @@ describe('FolderController', () => {
     deleteUseCase = { execute: jest.fn() } as any;
     cloneUseCase = { execute: jest.fn() } as any;
     searchUseCase = { execute: jest.fn() } as any;
+    getPublicFolderUseCase = { execute: jest.fn() } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FolderController],
@@ -44,6 +48,7 @@ describe('FolderController', () => {
         { provide: DeleteFolderUseCase, useValue: deleteUseCase },
         { provide: CloneFolderUseCase, useValue: cloneUseCase },
         { provide: SearchFoldersUseCase, useValue: searchUseCase },
+        { provide: GetPublicFolderUseCase, useValue: getPublicFolderUseCase },
       ],
     }).compile();
 
@@ -117,6 +122,18 @@ describe('FolderController', () => {
 
       expect(result).toEqual(cloned);
       expect(cloneUseCase.execute).toHaveBeenCalled();
+    });
+  });
+
+  describe('getPublicFolder', () => {
+    it('should call getPublicFolderUseCase', async () => {
+      const folder = { id: 'f-1', name: 'Public Folder' } as any;
+      getPublicFolderUseCase.execute.mockResolvedValue(folder);
+
+      const result = await controller.getPublicFolder('f-1');
+
+      expect(result).toEqual(folder);
+      expect(getPublicFolderUseCase.execute).toHaveBeenCalled();
     });
   });
 });

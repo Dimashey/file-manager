@@ -7,6 +7,13 @@ import { FolderNotFoundError } from '../../domain/errors/folder-not-found.error'
 export class DeleteFolderUseCase {
   constructor(private repo: FolderRepository) {}
 
+  /**
+   * Deletes a folder by ID for a user.
+   * Ensures the folder exists and is owned by the user before deletion.
+   *
+   * @param cmd - The command containing user ID and folder ID to delete.
+   * @throws {FolderNotFoundError} If the folder does not exist or does not belong to the user.
+   */
   async execute(cmd: DeleteFolderCommand) {
     const folder = await this.repo.findById(cmd.folderId);
 

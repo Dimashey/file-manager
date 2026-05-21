@@ -11,6 +11,14 @@ export class GetPublicFolderUseCase {
     private readonly fileRepo: FileRepository,
   ) {}
 
+  /**
+   * Retrieves a public folder along with all its subfolders and files.
+   * Validates that the folder exists and has public access enabled.
+   *
+   * @param command - The command containing the shared folder ID.
+   * @returns An object with the folder, its subfolders, and its files.
+   * @throws {SharedFolderNotFoundError} If the folder is not found or is not public.
+   */
   async execute(command: GetPublicFolderCommand) {
     const folder = await this.folderRepo.findById(command.folderId);
     if (!folder || !folder.isPublic) {
