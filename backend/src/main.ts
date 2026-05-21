@@ -20,7 +20,11 @@ async function bootstrap() {
 
   app.useGlobalFilters(new DomainExceptionFilter());
 
-  await app.listen(process.env.PORT ?? 3001);
+  const port = process.env.PORT ?? 3001;
+
+  console.log('STARTS ON PORT: ', port);
+
+  await app.listen(port);
 }
 
 void bootstrap();
