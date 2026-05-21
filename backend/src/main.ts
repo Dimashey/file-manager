@@ -20,7 +20,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new DomainExceptionFilter());
 
-  const port = process.env.PORT ?? 3001;
+  const port = process.env.PORT as number;
 
   console.log('STARTS ON PORT: ', port);
 
