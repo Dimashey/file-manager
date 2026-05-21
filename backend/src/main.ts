@@ -24,7 +24,7 @@ async function bootstrap() {
 
   console.log('STARTS ON PORT: ', port);
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 }
 
 void bootstrap();
