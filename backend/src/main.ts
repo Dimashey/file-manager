@@ -6,8 +6,12 @@ import { DomainExceptionFilter } from './shared/filters/domain-exception.filter'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  console.log(process.env.CORS_ORIGIN);
+
   app.enableCors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5174',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true,
   });
 
   const swaggerConfig = new DocumentBuilder()
