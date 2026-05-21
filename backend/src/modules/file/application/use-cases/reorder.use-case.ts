@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileRepository } from '../../domain/repositories/file.repository';
-import { ReorderFilesCommand } from '../dto/reorder.command';
+import { ReorderFilesCommand } from '../commands/reorder.command';
 
 @Injectable()
 export class ReorderFilesUseCase {

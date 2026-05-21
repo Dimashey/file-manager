@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FileRepository } from '../../domain/repositories/file.repository';
 import { FileNotFoundError } from '../../domain/errors/file-not-found.error';
-import { UpdateFileCommand } from '../dto/update-file.command';
+import { UpdateFileCommand } from '../commands/update-file.command';
 import { File } from '../../domain/file.entity';
 import { FileMovePolicy } from '../../domain/policies/file-file.policy';
 import { CanNotMoveFileToFolderError } from '../../domain/errors/can-not-move-file.error';

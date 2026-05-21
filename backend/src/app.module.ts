@@ -5,9 +5,9 @@ import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { dataSourceOptions } from './config/typeorm.config';
-import { AuthModule } from './modules/auth/presentation/auth.module';
-import { FolderModule } from './modules/folder/presentation/folder.module';
-import { FileModule } from './modules/file/presentation/file.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { FolderModule } from './modules/folder/folder.module';
+import { FileModule } from './modules/file/file.module';
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 
 @Module({

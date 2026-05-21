@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FileRepository } from '../../domain/repositories/file.repository';
 import { FileStorageService } from '../interfaces/file-storage.service';
 import { FileNotFoundError } from '../../domain/errors/file-not-found.error';
-import { DeleteFileCommand } from '../dto/delete-file.command';
+import { DeleteFileCommand } from '../commands/delete-file.command';
 
 @Injectable()
 export class DeleteFileUseCase {

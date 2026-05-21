@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FileRepository } from '../../domain/repositories/file.repository';
 import { FileStorageService } from '../interfaces/file-storage.service';
 import { SharedFileNotFoundError } from '../../domain/errors/shared-file-not-found.error';
-import { DownloadPublicFileCommand } from '../dto/download-public-file.command';
+import { DownloadPublicFileCommand } from '../commands/download-public-file.command';
 
 @Injectable()
 export class DownloadPublicFileUseCase {

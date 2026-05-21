@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FileRepository } from '../../domain/repositories/file.repository';
 import { SharedFileNotFoundError } from '../../domain/errors/shared-file-not-found.error';
-import { GetPublicFileCommand } from '../dto/get-public-file.command';
+import { GetPublicFileCommand } from '../commands/get-public-file.command';
 
 @Injectable()
 export class GetPublicFileUseCase {

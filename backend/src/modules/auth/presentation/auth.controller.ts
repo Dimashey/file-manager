@@ -8,9 +8,9 @@ import { UserProfileDto } from './dto/user-profile.dto';
 import { Public } from '../../../shared/decorators/public.decorator';
 import { CurrentUser } from '../../../shared/decorators/current-user.decorator';
 import { LoginUseCase } from '../application/use-cases/login.use-case';
-import { LoginCommand } from '../application/dto/login.command';
+import { LoginCommand } from '../application/commands/login.command';
 import { RegisterUseCase } from '../application/use-cases/register.use-case';
-import { RegisterCommand } from '../application/dto/register.command';
+import { RegisterCommand } from '../application/commands/register.command';
 
 @ApiTags('auth')
 @Controller('auth')

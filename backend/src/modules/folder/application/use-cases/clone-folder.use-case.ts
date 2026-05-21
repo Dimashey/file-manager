@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as crypto from 'node:crypto';
 import { Folder } from '../../domain/folder.entity';
 import { FolderRepository } from '../../domain/repositories/folder.repository';
-import { CloneFolderCommand } from '../dto/clone-folder.command';
+import { CloneFolderCommand } from '../commands/clone-folder.command';
 import { FolderNotFoundError } from '../../domain/errors/folder-not-found.error';
 
 @Injectable()

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ListFoldersCommand } from '../dto/list-folders.command';
+import { ListFoldersCommand } from '../commands/list-folders.command';
 import { FolderRepository } from '../../domain/repositories/folder.repository';
 
 @Injectable()

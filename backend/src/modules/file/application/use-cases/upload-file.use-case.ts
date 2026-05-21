@@ -6,7 +6,7 @@ import { File } from '../../domain/file.entity';
 import { ImageProcessingQueueService } from '../interfaces/image-processing-queue.service';
 
 import { v4 as uuidv4 } from 'uuid';
-import { UploadFileCommand } from '../dto/upload-file.command';
+import { UploadFileCommand } from '../commands/upload-file.command';
 import { FileMovePolicy } from '../../domain/policies/file-file.policy';
 import { CanNotMoveFileToFolderError } from '../../domain/errors/can-not-move-file.error';
 

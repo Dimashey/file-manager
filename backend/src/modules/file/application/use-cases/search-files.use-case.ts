@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileRepository } from '../../domain/repositories/file.repository';
-import { SearchFilesCommand } from '../dto/search-files.command';
+import { SearchFilesCommand } from '../commands/search-files.command';
 
 @Injectable()
 export class SearchFilesUseCase {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FileRepository } from '../../domain/repositories/file.repository';
 import { FileStorageService } from '../interfaces/file-storage.service';
-import { DownloadFileCommand } from '../dto/download-file.command';
+import { DownloadFileCommand } from '../commands/download-file.command';
 import { FileNotFoundError } from '../../domain/errors/file-not-found.error';
 
 @Injectable()

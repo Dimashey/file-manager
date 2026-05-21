@@ -4,7 +4,7 @@ import { UsersRepository } from '../../domain/repositories/users.repository';
 import { User } from '../../domain/user.entity';
 import { HashService } from '../interfaces/hash.service';
 import { TokenService } from '../interfaces/token.service';
-import { RegisterCommand } from '../dto/register.command';
+import { RegisterCommand } from '../commands/register.command';
 import { EmailAlreadyExistsError } from '../../domain/errors/email-already-exists.error';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileRepository } from '../../domain/repositories/file.repository';
-import { ListFilesCommand } from '../dto/list-files.command';
+import { ListFilesCommand } from '../commands/list-files.command';
 
 @Injectable()
 export class ListFilesUseCase {

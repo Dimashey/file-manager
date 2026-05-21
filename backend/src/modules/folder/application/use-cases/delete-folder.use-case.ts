@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FolderRepository } from '../../domain/repositories/folder.repository';
-import { DeleteFolderCommand } from '../dto/delete-folder.command';
+import { DeleteFolderCommand } from '../commands/delete-folder.command';
 import { FolderNotFoundError } from '../../domain/errors/folder-not-found.error';
 
 @Injectable()

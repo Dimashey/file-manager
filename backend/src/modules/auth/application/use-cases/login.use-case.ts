@@ -3,7 +3,7 @@ import { UsersRepository } from '../../domain/repositories/users.repository';
 import { InvalidCredentialsError } from '../../domain/errors/invalid-credentials.error';
 import { HashService } from '../interfaces/hash.service';
 import { TokenService } from '../interfaces/token.service';
-import { LoginCommand } from '../dto/login.command';
+import { LoginCommand } from '../commands/login.command';
 
 @Injectable()
 export class LoginUseCase {

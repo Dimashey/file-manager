@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FolderRepository } from '../../domain/repositories/folder.repository';
 import { FileRepository } from '../../../file/domain/repositories/file.repository';
 import { SharedFolderNotFoundError } from '../../domain/errors/shared-folder-not-found.error';
-import { GetPublicFolderCommand } from '../dto/get-public-folder.command';
+import { GetPublicFolderCommand } from '../commands/get-public-folder.command';
 
 @Injectable()
 export class GetPublicFolderUseCase {

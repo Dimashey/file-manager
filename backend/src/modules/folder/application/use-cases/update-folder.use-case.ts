@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FolderRepository } from '../../domain/repositories/folder.repository';
-import { UpdateFolderCommand } from '../dto/update-folder.command';
+import { UpdateFolderCommand } from '../commands/update-folder.command';
 import { FolderNotFoundError } from '../../domain/errors/folder-not-found.error';
 import { InvalidParentFolderError } from '../../domain/errors/invalid-parent-folder.error';
 
