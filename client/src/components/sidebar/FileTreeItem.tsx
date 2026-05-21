@@ -13,7 +13,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import type { FileItem } from '../../types/file';
-import { filesApi } from '../../api/files.api';
 import { useUpdateFile, useDeleteFile } from '../../hooks/useFiles';
 import { getFileIcon } from '../../utils/fileIcons';
 import { RenameDialog } from '../dialogs/RenameDialog';
@@ -30,10 +29,6 @@ export function FileTreeItem({ file, depth }: FileTreeItemProps) {
 
   const { mutate: updateFile, isPending: renaming } = useUpdateFile();
   const { mutate: deleteFile, isPending: deleting } = useDeleteFile();
-
-  const handleClick = () => {
-    filesApi.download(file.id, file.originalName);
-  };
 
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -53,14 +48,12 @@ export function FileTreeItem({ file, depth }: FileTreeItemProps) {
   return (
     <>
       <Box
-        onClick={handleClick}
         sx={{
           display: 'flex',
           alignItems: 'center',
           pl: depth * 2 + 0.5,
           pr: 0.5,
           py: 0.25,
-          cursor: 'pointer',
           borderRadius: 1,
           color: 'text.primary',
           '&:hover': { bgcolor: 'action.hover' },

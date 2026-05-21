@@ -7,10 +7,11 @@ const fileKeys = {
   list: (folderId?: string) => ['files', folderId ?? null] as const,
 };
 
-export function useFiles(folderId?: string) {
+export function useFiles(folderId?: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: fileKeys.list(folderId),
     queryFn: () => filesApi.list(folderId),
+    enabled: options?.enabled,
   });
 }
 

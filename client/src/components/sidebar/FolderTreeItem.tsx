@@ -40,10 +40,8 @@ export function FolderTreeItem({ folder, depth, selectedId, onSelect }: FolderTr
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const [dialog, setDialog] = useState<'create' | 'rename' | 'delete' | null>(null);
 
-  const { data: children, isLoading: childrenLoading } = useFolders(
-    expanded ? folder.id : undefined,
-  );
-  const { data: childFiles } = useFiles(expanded ? folder.id : undefined);
+  const { data: children, isLoading: childrenLoading } = useFolders(folder.id, { enabled: expanded });
+  const { data: childFiles } = useFiles(folder.id, { enabled: expanded });
   const { mutate: updateFolder, isPending: renaming } = useUpdateFolder();
   const { mutate: deleteFolder, isPending: deleting } = useDeleteFolder();
   const { mutate: cloneFolder } = useCloneFolder();

@@ -7,10 +7,11 @@ const folderKeys = {
   list: (parentId?: string) => ['folders', parentId ?? null] as const,
 };
 
-export function useFolders(parentId?: string) {
+export function useFolders(parentId?: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: folderKeys.list(parentId),
     queryFn: () => foldersApi.list(parentId),
+    enabled: options?.enabled,
   });
 }
 
