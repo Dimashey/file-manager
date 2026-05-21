@@ -14,9 +14,23 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
-import { ApiTags, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiBadRequestResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { FileReorderDto } from './dto/reorder.dto';
+import { FileResponseDto } from './dto/file-response.dto';
 import { CurrentUser } from '../../../shared/decorators/current-user.decorator';
 import { User } from '../../auth/domain/user.entity';
 import { ListFilesUseCase } from '../application/use-cases/list-files.use-case';
@@ -42,6 +56,7 @@ const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
 
 @ApiTags('files')
 @ApiBearerAuth()
+@ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('files')
 export class FileController {
   constructor(
@@ -57,43 +72,121 @@ export class FileController {
   ) {}
 
   @Get()
-  async list(@CurrentUser() user: User, @Query('folderId') folderId?: string) {
+  @ApiOperation({
+    summary: 'List files',
+    description: 'Retrieve a list of files owned by the current user, optionally filtered by folder',
+  })
+  @ApiQuery({
+    name: 'folderId',
+    required: false,
+    type: String,
+    description: 'Filter files by parent folder ID (null or omit for root)',
+  })
+  @ApiOkResponse({
+    type: [FileResponseDto],
+    description: 'List of files retrieved successfully',
+  })
+  async list(@CurrentUser() user: User, @Query('folderId') folderId?: string): Promise<FileResponseDto[]> {
     return this.listFilesUseCase.execute(new ListFilesCommand(user.id, folderId));
   }
 
   /** Handles multipart file upload: validates size, stores in MinIO, enqueues compression for images */
   @Post('upload')
   @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    summary: 'Upload file',
+    description: 'Uploads a file to storage and creates a new file metadata record',
+  })
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        file: { type: 'string', format: 'binary' },
-        folderId: { type: 'string' },
+        file: { type: 'string', format: 'binary', description: 'The file payload' },
+        folderId: { type: 'string', description: 'Target folder ID (omit for root)' },
       },
     },
+  })
+  @ApiCreatedResponse({
+    type: FileResponseDto,
+    description: 'File uploaded successfully',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid file upload parameters or file too large',
   })
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: MAX_FILE_SIZE_BYTES } }))
   async upload(
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
     @Body('folderId') folderId?: string,
-  ) {
+  ): Promise<FileResponseDto> {
     return this.uploadFileUseCase.execute(new UploadFileCommand(user.id, file, folderId));
   }
 
   @Get('search')
-  search(@CurrentUser() user: User, @Query('name') name: string) {
+  @ApiOperation({
+    summary: 'Search files',
+    description: 'Search files by their display names for the current user',
+  })
+  @ApiQuery({
+    name: 'name',
+    required: true,
+    type: String,
+    description: 'Term to match in file names',
+  })
+  @ApiOkResponse({
+    type: [FileResponseDto],
+    description: 'Matching files returned successfully',
+  })
+  async search(@CurrentUser() user: User, @Query('name') name: string): Promise<FileResponseDto[]> {
     return this.searchFilesUseCase.execute(new SearchFilesCommand(user.id, name ?? ''));
   }
 
   @Get(':id')
-  async findOne(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string) {
+  @ApiOperation({
+    summary: 'Get file details',
+    description: 'Retrieve detailed metadata of a specific file',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    format: 'uuid',
+    description: 'The unique identifier of the file',
+  })
+  @ApiOkResponse({
+    type: FileResponseDto,
+    description: 'File details retrieved successfully',
+  })
+  @ApiNotFoundResponse({
+    description: 'File not found or user does not have access',
+  })
+  async findOne(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string): Promise<FileResponseDto> {
     return this.getFileUseCase.execute(new GetFileCommand(user.id, id));
   }
 
   /** Streams file content from MinIO to the HTTP response */
   @Get(':id/download')
+  @ApiOperation({
+    summary: 'Download file content',
+    description: 'Streams the actual binary file content from storage',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    format: 'uuid',
+    description: 'The unique identifier of the file to download',
+  })
+  @ApiOkResponse({
+    description: 'File stream retrieved successfully',
+    schema: {
+      type: 'string',
+      format: 'binary',
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'File not found or user does not have access',
+  })
   async download(
     @CurrentUser() user: User,
     @Param('id', ParseUUIDPipe) id: string,
@@ -111,29 +204,104 @@ export class FileController {
   }
 
   @Patch('reorder')
+  @ApiOperation({
+    summary: 'Reorder files',
+    description: 'Updates sorting positions for a set of files in a folder',
+  })
+  @ApiBody({
+    type: FileReorderDto,
+    description: 'Array of file IDs and their new position index values',
+  })
+  @ApiOkResponse({
+    description: 'Files successfully reordered',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid payload format or IDs do not belong to the user',
+  })
   async reorder(@CurrentUser() user: User, @Body() dto: FileReorderDto): Promise<void> {
     await this.reorderFilesUseCase.execute(new ReorderFilesCommand(user.id, dto.items));
   }
 
   @Patch(':id')
+  @ApiOperation({
+    summary: 'Update file details',
+    description: 'Updates file name, parent folder relationship, or public status',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    format: 'uuid',
+    description: 'The unique identifier of the file',
+  })
+  @ApiBody({
+    type: UpdateFileDto,
+    description: 'New property values for the file metadata',
+  })
+  @ApiOkResponse({
+    type: FileResponseDto,
+    description: 'File metadata successfully updated',
+  })
+  @ApiNotFoundResponse({
+    description: 'File not found or user does not have access',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid input parameters',
+  })
   async update(
     @CurrentUser() user: User,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateFileDto,
-  ) {
+  ): Promise<FileResponseDto> {
     return this.updateFileUseCase.execute(
       new UpdateFileCommand(user.id, id, dto.name, dto.folderId, dto.isPublic),
     );
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'Delete file',
+    description: 'Permanently deletes a file from storage and removes its metadata record',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    format: 'uuid',
+    description: 'The unique identifier of the file to delete',
+  })
+  @ApiOkResponse({
+    description: 'File successfully deleted',
+  })
+  @ApiNotFoundResponse({
+    description: 'File not found or user does not have access',
+  })
   async remove(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string): Promise<void> {
     await this.deleteFileUseCase.execute(new DeleteFileCommand(user.id, id));
   }
 
   /** Copies a file in MinIO and creates a new DB record with "(copy)" suffix */
   @Post(':id/clone')
-  async clone(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string) {
+  @ApiOperation({
+    summary: 'Clone file',
+    description: 'Duplicates the file in storage and creates a new metadata entry with the "(copy)" suffix',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    format: 'uuid',
+    description: 'The unique identifier of the file to clone',
+  })
+  @ApiCreatedResponse({
+    type: FileResponseDto,
+    description: 'File successfully cloned',
+  })
+  @ApiNotFoundResponse({
+    description: 'Original file not found or user does not have access',
+  })
+  async clone(@CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string): Promise<FileResponseDto> {
     return this.cloneFileUseCase.execute(new CloneFileCommand(user.id, id));
   }
 }
+

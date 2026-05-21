@@ -1,16 +1,18 @@
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, Logger } from '@nestjs/common';
 
 import { Response } from 'express';
-import { EmailAlreadyExistsError } from 'src/modules/auth/domain/errors/email-already-exists.error';
-import { InvalidCredentialsError } from 'src/modules/auth/domain/errors/invalid-credentials.error';
-import { FileNotFoundError } from 'src/modules/file/domain/errors/file-not-found.error';
-import { FolderCannotBeParentOfItselfError } from 'src/modules/folder/domain/errors/folder-cannot-be-parent-of-itself.error';
-import { FolderNameCannotBeEmptyError } from 'src/modules/folder/domain/errors/folder-name-cannot-be-empty.error';
-import { FolderNotFoundError } from 'src/modules/folder/domain/errors/folder-not-found.error';
-import { InvalidParentFolderError } from 'src/modules/folder/domain/errors/invalid-parent-folder.error';
+import { EmailAlreadyExistsError } from '../../modules/auth/domain/errors/email-already-exists.error';
+import { InvalidCredentialsError } from '../../modules/auth/domain/errors/invalid-credentials.error';
+import { FileNotFoundError } from '../../modules/file/domain/errors/file-not-found.error';
+import { FolderCannotBeParentOfItselfError } from '../../modules/folder/domain/errors/folder-cannot-be-parent-of-itself.error';
+import { FolderNameCannotBeEmptyError } from '../../modules/folder/domain/errors/folder-name-cannot-be-empty.error';
+import { FolderNotFoundError } from '../../modules/folder/domain/errors/folder-not-found.error';
+import { InvalidParentFolderError } from '../../modules/folder/domain/errors/invalid-parent-folder.error';
 
 @Catch(Error)
 export class DomainExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(DomainExceptionFilter.name);
+
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
@@ -54,6 +56,8 @@ export class DomainExceptionFilter implements ExceptionFilter {
     if (exception instanceof InvalidParentFolderError) {
       return res.status(400).json({ message: exception.message });
     }
+
+    this.logger.error(exception.message, exception.stack);
 
     return res.status(500).json({ message: 'Internal server error' });
   }
