@@ -1,0 +1,91 @@
+import { useState } from 'react';
+import {
+  AppBar,
+  Avatar,
+  Box,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useCurrentUser } from '../../hooks/useAuth';
+
+const DRAWER_WIDTH = 260;
+
+interface TopBarProps {
+  onMenuToggle?: () => void;
+}
+
+export function TopBar({ onMenuToggle }: TopBarProps) {
+  const { currentUser, logout } = useCurrentUser();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const initials = currentUser?.name
+    ? currentUser.name
+        .split(' ')
+        .map((w) => w[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : '?';
+
+  return (
+    <AppBar
+      position="fixed"
+      elevation={0}
+      sx={{
+        width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+        ml: { sm: `${DRAWER_WIDTH}px` },
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+        color: 'text.primary',
+      }}
+    >
+      <Toolbar>
+        <IconButton edge="start" onClick={onMenuToggle} sx={{ mr: 1, display: { sm: 'none' } }}>
+          <MenuIcon />
+        </IconButton>
+
+        <Typography variant="h6" sx={{ flex: 1, fontSize: '1rem', fontWeight: 700 }}>
+          File Manager
+        </Typography>
+
+        {/* Search bar placeholder — wired up in Phase 4 */}
+        <Box sx={{ flex: 1 }} />
+
+        <Tooltip title={currentUser?.name ?? 'Account'}>
+          <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} size="small">
+            <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.75rem' }}>
+              {initials}
+            </Avatar>
+          </IconButton>
+        </Tooltip>
+
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+          <MenuItem disabled sx={{ opacity: 1 }}>
+            <Typography variant="caption" color="text.secondary">
+              {currentUser?.email}
+            </Typography>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setAnchorEl(null);
+              logout();
+            }}
+          >
+            <ListItemIcon>
+              <LogoutIcon fontSize="small" />
+            </ListItemIcon>
+            Sign out
+          </MenuItem>
+        </Menu>
+      </Toolbar>
+    </AppBar>
+  );
+}
