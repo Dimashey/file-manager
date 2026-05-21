@@ -37,7 +37,7 @@ export function DashboardPage() {
   const currentName = breadcrumb.length > 0 ? breadcrumb[breadcrumb.length - 1].name : 'My Drive';
 
   return (
-    <AppShell selectedFolderId={currentFolderId} onFolderSelect={handleSidebarSelect}>
+    <AppShell selectedFolderId={currentFolderId} onFolderSelect={handleSidebarSelect} onFolderNavigate={handleFolderNavigate}>
       <Box sx={{ p: 3, pb: 12 }}>
         <Breadcrumbs sx={{ mb: 2 }}>
           <Link

@@ -9,13 +9,14 @@ const APPBAR_HEIGHT = 64;
 interface AppShellProps {
   selectedFolderId: string | null;
   onFolderSelect: (id: string | null) => void;
+  onFolderNavigate: (folder: { id: string; name: string }) => void;
   children: ReactNode;
 }
 
-export function AppShell({ selectedFolderId, onFolderSelect, children }: AppShellProps) {
+export function AppShell({ selectedFolderId, onFolderSelect, onFolderNavigate, children }: AppShellProps) {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <TopBar />
+      <TopBar onFolderNavigate={onFolderNavigate} />
 
       <Drawer
         variant="permanent"

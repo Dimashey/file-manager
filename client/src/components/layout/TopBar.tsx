@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   AppBar,
   Avatar,
-  Box,
   IconButton,
   ListItemIcon,
   Menu,
@@ -14,14 +13,16 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useCurrentUser } from '../../hooks/useAuth';
+import { SearchBar } from '../search/SearchBar';
 
 const DRAWER_WIDTH = 260;
 
 interface TopBarProps {
   onMenuToggle?: () => void;
+  onFolderNavigate: (folder: { id: string; name: string }) => void;
 }
 
-export function TopBar({ onMenuToggle }: TopBarProps) {
+export function TopBar({ onMenuToggle, onFolderNavigate }: TopBarProps) {
   const { currentUser, logout } = useCurrentUser();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -52,12 +53,11 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
           <MenuIcon />
         </IconButton>
 
-        <Typography variant="h6" sx={{ flex: 1, fontSize: '1rem', fontWeight: 700 }}>
+        <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 700, mr: 2 }}>
           File Manager
         </Typography>
 
-        {/* Search bar placeholder — wired up in Phase 4 */}
-        <Box sx={{ flex: 1 }} />
+        <SearchBar onFolderNavigate={onFolderNavigate} />
 
         <Tooltip title={currentUser?.name ?? 'Account'}>
           <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} size="small">
