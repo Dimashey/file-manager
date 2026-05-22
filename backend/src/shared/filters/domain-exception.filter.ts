@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, Logger } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, Logger, HttpException } from '@nestjs/common';
 
 import { Response } from 'express';
 import { EmailAlreadyExistsError } from '../../modules/auth/domain/errors/email-already-exists.error';
@@ -20,8 +20,11 @@ export class DomainExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
 
-    // map domain → HTTP
-    //
+    if (exception instanceof HttpException) {
+      const status = exception.getStatus();
+      const body = exception.getResponse();
+      return res.status(status).json(typeof body === 'string' ? { message: body } : body);
+    }
 
     /**
      * Auth

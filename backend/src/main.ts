@@ -14,7 +14,6 @@ process.on('unhandledRejection', (err) => {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  console.log(process.env.CORS_ORIGIN);
 
   app.enableCors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5174',
